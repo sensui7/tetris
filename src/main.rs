@@ -1,3 +1,4 @@
+pub mod randomizer;
 pub mod pieces;
 pub mod board;
 pub mod app;
@@ -10,6 +11,8 @@ extern crate opengl_graphics;
 use crate::pieces::*;
 use crate::board::*;
 use crate::app::*;
+use crate::randomizer::*;
+use crate::randomizer::PieceTypes::*;
 use piston::window::WindowSettings;
 use piston::event_loop::*;
 use piston::input::*;
@@ -33,13 +36,18 @@ fn main() {
         .build()
         .unwrap();
 
+	/*
 	let t = Piece {
-		piece_type: "T".to_string(),
+		piece_type: T,
 		rotation: 0,
 		p1: Point { x: 200.0, y: 0.0 },
 		p2: Point { x: 240.0, y: 0.0 },
 		p3: Point { x: 160.0, y: 0.0 },
 		p4: Point { x: 200.0, y: -40.0 }
+	};
+	*/
+	let randomizer = Randomizer {
+		bag: vec![]
 	};
 
 	let b = Board {
@@ -54,8 +62,9 @@ fn main() {
     let mut app = App {
         gl: GlGraphics::new(opengl),
 		board: b,
-		piece: t,
+		piece: randomizer.get(),
 		time: 0.0,
+		randomizer: randomizer
     };
 
     let mut events = Events::new(EventSettings::new());

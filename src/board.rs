@@ -1,4 +1,6 @@
 use crate::pieces::*;
+use crate::randomizer::*;
+use crate::randomizer::PieceTypes::*;
 
 pub struct Board {
 	pub rows: u64,
@@ -10,9 +12,14 @@ impl Board {
 	// Only call this when it lands on bottom/collides
 	pub fn set(&mut self, p: &Piece) {
 		let mut piece_digit: u64 = 0;
-		match p.piece_type.as_str() {
-			"T" => { piece_digit = 1 },
-			"I" => { piece_digit = 2 },
+		match p.piece_type {
+			T => { piece_digit = 1 },
+			I => { piece_digit = 2 },
+			S => { piece_digit = 3 },
+			L => { piece_digit = 4 },
+			LR => { piece_digit = 5 },
+			Z  => { piece_digit = 6 },
+			ZR => { piece_digit = 7 },
 			_ => println!("error in determining piece type")
 		};
 

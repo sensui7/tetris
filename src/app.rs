@@ -1,5 +1,7 @@
 use crate::pieces::*;
 use crate::board::*;
+use crate::randomizer::*;
+use crate::randomizer::PieceTypes::*;
 use piston::input::*;
 use opengl_graphics::{ GlGraphics };
 
@@ -8,12 +10,16 @@ pub struct App {
 	pub board: Board,
 	pub piece: Piece,
 	pub time: f64,
+	pub randomizer: Randomizer
 }
 
 impl App {
     pub fn render(&mut self, args: &RenderArgs) {
         use graphics::*;
 
+		const DARK_BLUE: [f32; 4] = [0.0, 0.0, 0.54, 1.0];
+		const ORANGE: [f32; 4] = [1.0, 0.64, 0.0, 1.0];
+		const YELLOW: [f32; 4] = [1.0, 1.0, 0.0, 1.0];
 		const TEAL: [f32; 4] = [0.0, 1.0, 1.0, 1.0];
 		const PURPLE: [f32; 4] = [1.0, 0.0, 1.0, 1.0];
 		const BLACK: [f32; 4] = [0.0, 0.0, 0.0, 1.0];
@@ -49,18 +55,37 @@ impl App {
 			*/
 			//let transform = c.transform.trans(0.0, 0.0);
             // Draw a box rotating around the middle of the screen.
-			match curr_piece.as_str() {
-				"T" => {
+			match curr_piece {
+			// Need to make the 4 rectangle calls into a function
+				T => {
 					rectangle(PURPLE, square, c.transform, gl);
 					rectangle(PURPLE, square2, c.transform, gl);
 					rectangle(PURPLE, square3, c.transform, gl);
 					rectangle(PURPLE, square4, c.transform, gl);
 				},
-				"I" => {
+				I => {
 					rectangle(TEAL, square, c.transform, gl);
 					rectangle(TEAL, square2, c.transform, gl);
 					rectangle(TEAL, square3, c.transform, gl);
 					rectangle(TEAL, square4, c.transform, gl);
+				},
+				S => {
+					rectangle(YELLOW, square, c.transform, gl);
+					rectangle(YELLOW, square2, c.transform, gl);
+					rectangle(YELLOW, square3, c.transform, gl);
+					rectangle(YELLOW, square4, c.transform, gl);
+				},
+				L => {
+					rectangle(ORANGE, square, c.transform, gl);
+					rectangle(ORANGE, square2, c.transform, gl);
+					rectangle(ORANGE, square3, c.transform, gl);
+					rectangle(ORANGE, square4, c.transform, gl);
+				},
+				LR => {
+					rectangle(DARK_BLUE, square, c.transform, gl);
+					rectangle(DARK_BLUE, square2, c.transform, gl);
+					rectangle(DARK_BLUE, square3, c.transform, gl);
+					rectangle(DARK_BLUE, square4, c.transform, gl);
 				}
 				_ => println!("ERROR")
 			}
@@ -77,6 +102,12 @@ impl App {
 						//println!("{}", col);
 					} else if j == &2 {
 						rectangle(TEAL, sq, c.transform, gl);
+					} else if j == &3 {
+						rectangle(YELLOW, sq, c.transform, gl);
+					} else if j == &4 {
+						rectangle(ORANGE, sq, c.transform, gl);
+					} else if j == &5 {
+						rectangle(DARK_BLUE, sq, c.transform, gl);
 					}
 					col += 1;
 				}
@@ -105,7 +136,7 @@ impl App {
 
 				// Need to implement a random piece creator that returns a Piece struct
 				let t = Piece {
-					piece_type: "I".to_string(),
+					piece_type: I,
 					rotation: 0,
 					p1: Point { x: 120.0, y: 0.0 },
 					p2: Point { x: 160.0, y: 0.0 },

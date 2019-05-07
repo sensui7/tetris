@@ -1,4 +1,6 @@
 use crate::WIDTH;
+use crate::randomizer::*;
+use crate::randomizer::PieceTypes::*;
 
 pub struct Point {
 	pub x: f64,
@@ -15,7 +17,8 @@ pub struct Point {
 7 - I
 */
 pub struct Piece {
-	pub piece_type: String,
+//	pub piece_type: String,
+	pub piece_type: PieceTypes,
 	pub rotation: u64,
 	pub p1: Point,
 	pub p2: Point,
@@ -59,7 +62,7 @@ impl Piece {
 	}
 
 	pub fn rotate_left(&mut self) {
-		if self.piece_type == "T" {
+		if self.piece_type == T {
 			match self.rotation {
 				0 => { 
 					self.rotate_t();
@@ -88,7 +91,7 @@ impl Piece {
 				_ => println!("error")
 			}
 		}
-		if self.piece_type == "I" {
+		if self.piece_type == I {
 			match self.rotation {
 				0 => { 
 					self.p1.x = self.p3.x;
