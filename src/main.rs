@@ -3,16 +3,15 @@ pub mod pieces;
 pub mod board;
 pub mod app;
 
+extern crate rand;
 extern crate piston;
 extern crate graphics;
 extern crate glutin_window;
 extern crate opengl_graphics;
 
-use crate::pieces::*;
 use crate::board::*;
 use crate::app::*;
 use crate::randomizer::*;
-use crate::randomizer::PieceTypes::*;
 use piston::window::WindowSettings;
 use piston::event_loop::*;
 use piston::input::*;
@@ -26,7 +25,7 @@ fn main() {
     // Change this to OpenGL::V2_1 if not working.
     let opengl = OpenGL::V3_2;
 
-    // Create an Glutin window.
+    // Create an Glutin window
     let mut window: Window = WindowSettings::new(
             "Tetris",
             [400, 800]
@@ -36,29 +35,18 @@ fn main() {
         .build()
         .unwrap();
 
-	/*
-	let t = Piece {
-		piece_type: T,
-		rotation: 0,
-		p1: Point { x: 200.0, y: 0.0 },
-		p2: Point { x: 240.0, y: 0.0 },
-		p3: Point { x: 160.0, y: 0.0 },
-		p4: Point { x: 200.0, y: -40.0 }
-	};
-	*/
-	let randomizer = Randomizer {
+	let mut randomizer: Randomizer = Randomizer {
 		bag: vec![]
 	};
 
-	let b = Board {
+	// Create a board object
+	let b: Board = Board {
 		rows: 10,
 		cols: 20,
 		data: vec![vec![0; 10]; 20]
 	};
 
-	//b.display();
-
-    // Create a new game and run it.
+    // Create a new game and run it
     let mut app = App {
         gl: GlGraphics::new(opengl),
 		board: b,

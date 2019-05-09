@@ -1,5 +1,4 @@
 use crate::pieces::*;
-use crate::randomizer::*;
 use crate::randomizer::PieceTypes::*;
 
 pub struct Board {
@@ -9,24 +8,42 @@ pub struct Board {
 }
 
 impl Board {
-	// Only call this when it lands on bottom/collides
+	// Called when it lands on bottom/collides
 	pub fn set(&mut self, p: &Piece) {
-		let mut piece_digit: u64 = 0;
+		let piece_digit: u64;
 		match p.piece_type {
 			T => { piece_digit = 1 },
 			I => { piece_digit = 2 },
-			S => { piece_digit = 3 },
+			O => { piece_digit = 3 },
 			L => { piece_digit = 4 },
-			LR => { piece_digit = 5 },
-			Z  => { piece_digit = 6 },
-			ZR => { piece_digit = 7 },
-			_ => println!("error in determining piece type")
+			J => { piece_digit = 5 },
+			Z => { piece_digit = 6 },
+			S => { piece_digit = 7 }
 		};
 
 		self.data[(p.p1.y / 40.0).round() as usize][(p.p1.x / 40.0).round() as usize] = piece_digit;
 		self.data[(p.p2.y / 40.0).round() as usize][(p.p2.x / 40.0).round() as usize] = piece_digit;
 		self.data[(p.p3.y / 40.0).round() as usize][(p.p3.x / 40.0).round() as usize] = piece_digit;
 		self.data[(p.p4.y / 40.0).round() as usize][(p.p4.x / 40.0).round() as usize] = piece_digit;
+	}
+
+	pub fn clear(&mut self) {
+		let empty = vec![0; 10];
+		let mut count = 0;
+		let mut new_data = vec![];
+
+		for i in self.data.iter_mut() {
+			let mut iter = i.iter();
+			if iter.find(|&&x| x == 0) == None {
+				new_data.push(count);
+			}
+			count += 1;
+		}
+
+		for j in new_data {
+			self.data.remove(j);
+			self.data.insert(0 as usize, empty.clone());
+		}
 	}
 
 	pub fn display(&self) {
@@ -45,14 +62,12 @@ impl Board {
 		return ((x / 40.0).round() as usize, (y / 40.0).round() as usize);
 	}
 
-	/*
 	fn convert_xy_f64(&self, x: f64, y: f64) -> (f64, f64) {
 		if y < 0.0 {
 			return (x / 40.0, 0.0);
 		}
 		return (x / 40.0, y / 40.0);
 	}
-	*/
 
 	pub fn collision(&mut self, p: &Piece) -> bool {
 		let p1 = self.convert_xy(p.p1.x, p.p1.y);
@@ -60,9 +75,11 @@ impl Board {
 		let p3 = self.convert_xy(p.p3.x, p.p3.y);
 		let p4 = self.convert_xy(p.p4.x, p.p4.y);
 
+		/*
 		if  p1.1 == 0 || p2.1 == 0 || p3.1 == 0 || p4.1 == 0 {
 			return false;
 		}
+		*/
 
 		if p1.1 >= 19 || p2.1 >= 19 || p3.1 >= 19 || p4.1 >= 19 {
 			return true;
@@ -126,19 +143,102 @@ impl Board {
 			   self.check_side_collision(p4.0, p4.1, dir);
 	}
 
-	/*
-	fn check_can_rotate(&self, p: &Piece) -> bool {
+	pub fn check_rotate_overlap(&self, p: &Piece) -> bool {
+		let p1 = self.convert_xy(p.p1.x, p.p1.y);
+		let p2 = self.convert_xy(p.p2.x, p.p2.y);
+		let p3 = self.convert_xy(p.p3.x, p.p3.y);
+		let p4 = self.convert_xy(p.p4.x, p.p4.y);
+
+		// https://doc.rust-lang.org/std/iter/struct.Enumerate.html
+		for (i, col) in self.data.iter().enumerate() {
+			for (j, row) in col.iter().enumerate() {
+				if self.data[i][j] != 0 {
+					if p1.1 == i && p1.0 == j {
+						return true;
+					}
+					if p2.1 == i && p2.0 == j {
+						return true;
+					}
+					if p3.1 == i && p3.0 == j {
+						return true;
+					}
+					if p4.1 == i && p4.0 == j {
+						return true;
+					}
+				}
+			}
+		}
+
+		false
+	}
+	
+	pub fn check_can_rotate(&self, p: &mut Piece) -> bool {
 		let p1 = self.convert_xy_f64(p.p1.x, p.p1.y);
 		let p2 = self.convert_xy_f64(p.p2.x, p.p2.y);
 		let p3 = self.convert_xy_f64(p.p3.x, p.p3.y);
 		let p4 = self.convert_xy_f64(p.p4.x, p.p4.y);
 
-		if p1.0 < 0.0 || p2.0 < 0.0 || p3.0 < 0.0 || p4.0 < 0.0 {
+		let mut test = p.clone();
+		test.rotate_left();
+
+		if self.check_rotate_overlap(&test) == true {
 			return false;
+		}
+
+		match p.piece_type {
+			T => {
+				if p.rotation == 3 && p3.0 == 9.0 {
+					p.move_left();
+				} else if p.rotation == 1 && p3.0 == 0.0 {
+					p.move_right();
+				}
+			},
+			I => {
+				if p.rotation == 1 && p3.0 == 8.0 {
+					p.move_left();
+				} else if p.rotation == 1 && p3.0 == 9.0 {
+					p.move_left();
+					p.move_left();
+				} else if p.rotation == 1 && p3.0 == 0.0 {
+					p.move_right();
+				}
+			},
+			O => {
+				return true;
+			},
+			L => {
+				if p.rotation == 0 && p4.0 == 9.0 {
+					p.move_left();
+				} else if p.rotation == 2 && p4.0 <= 1.0 {
+					p.move_right();
+				}
+			},
+			J => {
+				if p.rotation == 0 && p1.0 == 8.0 {
+					p.move_left();
+				} else if p.rotation == 0 && p1.0 == 9.0 {
+					p.move_left();
+					p.move_left();
+				} else if p.rotation == 2 && p1.0 == 1.0 {
+					p.move_right();
+				} else if p.rotation == 2 && p1.0 == 0.0 {
+					p.move_right();
+					p.move_right();
+				}
+			},
+			Z => {
+				if p.rotation == 1 && p2.0 == 9.0 {
+					p.move_left();
+				}
+			},
+			S => {
+				if p.rotation == 1 && p3.0 == 9.0 {
+					p.move_left();
+				}
+			}
 		}
 
 		true
 	}
-	*/
 
 }

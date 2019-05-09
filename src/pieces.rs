@@ -1,7 +1,9 @@
 use crate::WIDTH;
 use crate::randomizer::*;
 use crate::randomizer::PieceTypes::*;
+use std::fmt;
 
+#[derive(Clone)]
 pub struct Point {
 	pub x: f64,
 	pub y: f64
@@ -16,6 +18,8 @@ pub struct Point {
 6 - Square
 7 - I
 */
+
+#[derive(Clone)]
 pub struct Piece {
 //	pub piece_type: String,
 	pub piece_type: PieceTypes,
@@ -25,6 +29,13 @@ pub struct Piece {
 	pub p3: Point,
 	pub p4: Point
 }
+
+impl fmt::Display for Piece {
+	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    	write!(f, "hi")
+    }
+}
+
 
 impl Piece {
 	pub fn move_left(&mut self) {
@@ -109,6 +120,142 @@ impl Piece {
 					self.p2.y = self.p3.y;
 					self.p4.x = self.p3.x - 40.0;
 					self.p4.y = self.p3.y;
+					self.rotation = 0;
+				},
+				_ => println!("error")
+			}
+		}
+		if self.piece_type == Z {
+			match self.rotation {
+				0 => { 
+					self.p4.x = self.p3.x - 40.0;
+					self.p4.y = self.p3.y;
+					self.p3.x = self.p1.x;
+					self.p3.y = self.p1.y;
+					self.p1.x = self.p2.x;
+					self.p1.y = self.p2.y - 40.0;
+					self.rotation = 1;
+				},
+				1 => {
+					self.p1.x = self.p3.x;
+					self.p1.y = self.p3.y;
+					self.p3.x = self.p2.x;
+					self.p3.y = self.p2.y + 40.0;
+					self.p4.x = self.p3.x + 40.0;
+					self.p4.y = self.p3.y;
+					self.rotation = 0;
+				},
+				_ => println!("error")
+			}
+		}
+		if self.piece_type == S {
+			match self.rotation {
+				0 => { 
+					self.p4.x = self.p2.x;
+					self.p4.y = self.p2.y;
+					self.p2.x = self.p3.x - 40.0;
+					self.p2.y = self.p3.y;
+					self.p1.x = self.p2.x;
+					self.p1.y = self.p2.y - 40.0;
+					self.rotation = 1;
+				},
+				1 => {
+					self.p4.x = self.p3.x + 40.0;
+					self.p4.y = self.p3.y;
+					self.p2.x = self.p3.x;
+					self.p2.y = self.p3.y + 40.0;
+					self.p1.x = self.p2.x - 40.0;
+					self.p1.y = self.p2.y;
+					self.rotation = 0;
+				},
+				_ => println!("error")
+			}
+		}
+		if self.piece_type == L {
+			match self.rotation {
+				0 => { 
+					self.p4.x = self.p3.x;
+					self.p4.y = self.p3.y;
+					self.p3.x = self.p2.x;
+					self.p3.y = self.p2.y;
+					self.p2.x = self.p3.x + 40.0;
+					self.p2.y = self.p3.y;
+					self.p1.x = self.p2.x + 40.0;
+					self.p1.y = self.p2.y;
+					self.rotation = 1;
+				},
+				1 => {
+					self.p4.x = self.p3.x;
+					self.p4.y = self.p3.y;
+					self.p3.x = self.p2.x;
+					self.p3.y = self.p2.y;
+					self.p2.x = self.p3.x;
+					self.p2.y = self.p3.y + 40.0;
+					self.p1.x = self.p2.x;
+					self.p1.y = self.p2.y + 40.0;
+					self.rotation = 2;
+				},
+				2 => {
+					self.p4.x = self.p3.x;
+					self.p4.y = self.p3.y;
+					self.p3.x = self.p2.x;
+					self.p3.y = self.p2.y;
+					self.p2.x = self.p3.x - 40.0;
+					self.p2.y = self.p3.y;
+					self.p1.x = self.p2.x - 40.0;
+					self.p1.y = self.p2.y;
+					self.rotation = 3;
+				},
+				3 => {
+					self.p4.x = self.p3.x;
+					self.p4.y = self.p3.y;
+					self.p3.x = self.p2.x;
+					self.p3.y = self.p2.y;
+					self.p2.x = self.p3.x;
+					self.p2.y = self.p3.y - 40.0;
+					self.p1.x = self.p2.x;
+					self.p1.y = self.p2.y - 40.0;
+					self.rotation = 0;
+				},
+				_ => println!("error")
+			}
+		}
+		if self.piece_type == J {
+			match self.rotation {
+				0 => { 
+					self.p4.x = self.p2.x;
+					self.p4.y = self.p2.y;
+					self.p2.y = self.p3.y;
+					self.p2.x = self.p3.x + 40.0;
+					self.p1.y = self.p2.y;
+					self.p1.x = self.p2.x + 40.0;
+					self.rotation = 1;
+				},
+				1 => {
+					self.p4.x = self.p2.x;
+					self.p4.y = self.p2.y;
+					self.p2.y = self.p3.y + 40.0;
+					self.p2.x = self.p3.x;
+					self.p1.y = self.p2.y + 40.0;
+					self.p1.x = self.p2.x;
+					self.rotation = 2;
+				},
+				2 => {
+					self.p4.x = self.p2.x;
+					self.p4.y = self.p2.y;
+					self.p2.y = self.p3.y;
+					self.p2.x = self.p3.x - 40.0;
+					self.p1.y = self.p2.y;
+					self.p1.x = self.p2.x - 40.0;
+					self.rotation = 3;
+				},
+				3 => {
+					self.p4.x = self.p2.x;
+					self.p4.y = self.p2.y;
+					self.p2.y = self.p3.y - 40.0;
+					self.p2.x = self.p3.x;
+					self.p1.y = self.p2.y - 40.0;
+					self.p1.x = self.p2.x;
 					self.rotation = 0;
 				},
 				_ => println!("error")

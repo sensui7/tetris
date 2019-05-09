@@ -17,6 +17,8 @@ impl App {
     pub fn render(&mut self, args: &RenderArgs) {
         use graphics::*;
 
+		const GREEN: [f32; 4] = [0.0, 1.0, 0.0, 1.0];
+        const RED:   [f32; 4] = [1.0, 0.0, 0.0, 1.0];
 		const DARK_BLUE: [f32; 4] = [0.0, 0.0, 0.54, 1.0];
 		const ORANGE: [f32; 4] = [1.0, 0.64, 0.0, 1.0];
 		const YELLOW: [f32; 4] = [1.0, 1.0, 0.0, 1.0];
@@ -24,7 +26,6 @@ impl App {
 		const PURPLE: [f32; 4] = [1.0, 0.0, 1.0, 1.0];
 		const BLACK: [f32; 4] = [0.0, 0.0, 0.0, 1.0];
         const WHITE: [f32; 4] = [1.0, 1.0, 1.0, 1.0];
-        //const RED:   [f32; 4] = [1.0, 0.0, 0.0, 1.0];
 
 		// if next block flag is true, generate a new piece here
         let square = rectangle::square(self.piece.p1.x, self.piece.p1.y, 40.0);
@@ -69,7 +70,7 @@ impl App {
 					rectangle(TEAL, square3, c.transform, gl);
 					rectangle(TEAL, square4, c.transform, gl);
 				},
-				S => {
+				O => {
 					rectangle(YELLOW, square, c.transform, gl);
 					rectangle(YELLOW, square2, c.transform, gl);
 					rectangle(YELLOW, square3, c.transform, gl);
@@ -81,13 +82,24 @@ impl App {
 					rectangle(ORANGE, square3, c.transform, gl);
 					rectangle(ORANGE, square4, c.transform, gl);
 				},
-				LR => {
+				J => {
 					rectangle(DARK_BLUE, square, c.transform, gl);
 					rectangle(DARK_BLUE, square2, c.transform, gl);
 					rectangle(DARK_BLUE, square3, c.transform, gl);
 					rectangle(DARK_BLUE, square4, c.transform, gl);
 				}
-				_ => println!("ERROR")
+				Z => {
+					rectangle(RED, square, c.transform, gl);
+					rectangle(RED, square2, c.transform, gl);
+					rectangle(RED, square3, c.transform, gl);
+					rectangle(RED, square4, c.transform, gl);
+				},
+				S => {
+					rectangle(GREEN, square, c.transform, gl);
+					rectangle(GREEN, square2, c.transform, gl);
+					rectangle(GREEN, square3, c.transform, gl);
+					rectangle(GREEN, square4, c.transform, gl);
+				}
 			}
 
 			// Render grid history of other blocks!
@@ -108,6 +120,10 @@ impl App {
 						rectangle(ORANGE, sq, c.transform, gl);
 					} else if j == &5 {
 						rectangle(DARK_BLUE, sq, c.transform, gl);
+					} else if j == &6 {
+						rectangle(RED, sq, c.transform, gl);
+					} else if j == &7 {
+						rectangle(GREEN, sq, c.transform, gl);
 					}
 					col += 1;
 				}
@@ -121,32 +137,18 @@ impl App {
     }
 
     pub fn update(&mut self, args: &UpdateArgs) {
-        // self.rotation += 2.0 * args.dt;
-
-		// if collision here, update the piece to the next one!
-		// update the board as well
-
-		if self.time - args.dt >= 1.0 {
+		if self.time - args.dt >= 0.8 {
 			if self.board.collision(&self.piece) == false {
 				self.piece.move_down();
 			}
 			else {
 				self.board.set(&self.piece);
-				self.board.display();
-
-				// Need to implement a random piece creator that returns a Piece struct
-				let t = Piece {
-					piece_type: I,
-					rotation: 0,
-					p1: Point { x: 120.0, y: 0.0 },
-					p2: Point { x: 160.0, y: 0.0 },
-					p3: Point { x: 200.0, y: 0.0 },
-					p4: Point { x: 240.0, y: 0.0 }
-				};
-
-				self.piece = t;
+				// Debugging purposes
+				// self.board.display();
+				self.piece = self.randomizer.get();
+				self.board.clear();
 			}
-			/*
+			/* Debugging purposes
 			println!("p1: {}, {}", self.piece.p1.x / 40.0, self.piece.p1.y / 40.0);
 			println!("p2: {}, {}", self.piece.p2.x / 40.0, self.piece.p2.y / 40.0);
 			println!("p3: {}, {}", self.piece.p3.x / 40.0, self.piece.p3.y / 40.0);
@@ -155,7 +157,8 @@ impl App {
 			self.time = 0.0;
 		}
 
-		//println!("{}", self.time);
+		// B ebugging purposes
+		// println!("{}", self.time);
 		self.time += args.dt;
     }
 
@@ -163,9 +166,16 @@ impl App {
 		if is_press {
 			if let Button::Keyboard(key) = button {
 				match key {
-					//Key::Left => println!("Left pressed (x,y): {}, {}", self.x, self.y),
 					Key::Space => {
-							
+						while self.board.collision(&self.piece) != true {
+							self.piece.move_down();
+							self.time = 1.0;
+						}
+					},
+					Key::Up => {
+						if self.board.check_can_rotate(&mut self.piece) == true {
+							self.piece.rotate_left()
+						}
 					},
 					Key::Left => {
 						if self.board.check_overlap(&self.piece, 0) != true {
@@ -183,8 +193,13 @@ impl App {
 						}
 					},
 					Key::Z => {
-						//if self.board.check_can_rotate(&self.piece) != false {
+						if self.board.check_can_rotate(&mut self.piece) == true {
 							self.piece.rotate_left()
+						}
+					},
+					Key::X => {
+						//if self.board.check_can_rotate(&mut self.piece) == true {
+							self.piece.rotate_right()
 						//}
 					},
 					_ => ()
