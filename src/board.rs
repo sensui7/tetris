@@ -149,6 +149,14 @@ impl Board {
 		let p3 = self.convert_xy(p.p3.x, p.p3.y);
 		let p4 = self.convert_xy(p.p4.x, p.p4.y);
 
+		/* debugging purposes
+		println!("p1 {}, {}", p1.0, p1.1);
+		println!("p2 {}, {}", p2.0, p2.1);
+		println!("p3 {}, {}", p3.0, p3.1);
+		println!("p4 {}, {}", p4.0, p4.1);
+		println!("");
+		*/
+
 		// https://doc.rust-lang.org/std/iter/struct.Enumerate.html
 		for (i, col) in self.data.iter().enumerate() {
 			for (j, row) in col.iter().enumerate() {
@@ -178,10 +186,17 @@ impl Board {
 		let p3 = self.convert_xy_f64(p.p3.x, p.p3.y);
 		let p4 = self.convert_xy_f64(p.p4.x, p.p4.y);
 
-		let mut test = p.clone();
-		test.rotate_left();
+		let mut test_left = p.clone();
+		let mut test_right = p.clone();
+		
+		test_left.rotate_left();
+		test_right.rotate_right();
 
-		if self.check_rotate_overlap(&test) == true {
+		if self.check_rotate_overlap(&test_left) == true {
+			return false;
+		}
+		
+		if self.check_rotate_overlap(&test_right) == true {
 			return false;
 		}
 

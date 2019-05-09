@@ -144,7 +144,7 @@ impl App {
 			else {
 				self.board.set(&self.piece);
 				// Debugging purposes
-				// self.board.display();
+				self.board.display();
 				self.piece = self.randomizer.get();
 				self.board.clear();
 			}
@@ -198,9 +198,9 @@ impl App {
 						}
 					},
 					Key::X => {
-						//if self.board.check_can_rotate(&mut self.piece) == true {
+						if self.board.check_can_rotate(&mut self.piece) == true {
 							self.piece.rotate_right()
-						//}
+						}
 					},
 					_ => ()
 				}

@@ -72,6 +72,68 @@ impl Piece {
 		self.p4.y = self.p2.y;
 	}
 
+	pub fn rotate_t_right(&mut self) {
+		self.p2.x = self.p4.x;
+		self.p2.y = self.p4.y;
+		self.p4.x = self.p3.x;
+		self.p4.y = self.p3.y;
+	}
+
+	pub fn rotate_right(&mut self) {
+		if self.piece_type == T {
+			match self.rotation {
+				0 => {
+					self.rotate_t_right();				
+					self.p3.x = self.p1.x;	
+					self.p3.y = self.p1.y + 40.0;	
+					self.rotation = 3;
+				},
+				3 => {
+					self.rotate_t_right();
+					self.p3.x = self.p1.x + 40.0;	
+					self.p3.y = self.p1.y;	
+					self.rotation = 2;
+				},
+				2 => {
+					self.rotate_t_right();
+					self.p3.x = self.p1.x;	
+					self.p3.y = self.p1.y - 40.0;	
+					self.rotation = 1;
+				},
+				1 => {
+					self.rotate_t_right();
+					self.p3.x = self.p1.x - 40.0;	
+					self.p3.y = self.p1.y;	
+					self.rotation = 0;
+				}
+				_ => println!("error in rotating right")
+			}
+		}
+		if self.piece_type == I {
+			match self.rotation {
+				0 => { 
+					self.p1.x = self.p3.x;
+					self.p1.y = self.p3.y + 80.0;
+					self.p2.x = self.p3.x;
+					self.p2.y = self.p3.y + 40.0;
+					self.p4.x = self.p3.x;
+					self.p4.y = self.p3.y - 40.0;
+					self.rotation = 1;
+				},
+				1 => {
+					self.p1.x = self.p3.x - 80.0;
+					self.p1.y = self.p3.y;
+					self.p2.x = self.p3.x - 40.0;
+					self.p2.y = self.p3.y;
+					self.p4.x = self.p3.x + 40.0;
+					self.p4.y = self.p3.y;
+					self.rotation = 0;
+				},
+				_ => println!("error")
+			}
+		}
+	}
+
 	pub fn rotate_left(&mut self) {
 		if self.piece_type == T {
 			match self.rotation {
