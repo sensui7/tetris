@@ -132,6 +132,170 @@ impl Piece {
 				_ => println!("error")
 			}
 		}
+		if self.piece_type == Z {
+			match self.rotation {
+				0 => {
+					self.p2 = self.p4.clone();
+					self.p4.x = self.p3.x;
+					self.p4.y = self.p3.y + 40.0;
+					self.p1.x = self.p2.x;
+					self.p1.y = self.p2.y - 40.0;
+					self.rotation = 3;
+				},
+				3 => {
+					self.p2 = self.p4.clone();
+					self.p4.x = self.p3.x - 40.0;
+					self.p4.y = self.p3.y;
+					self.p1.x = self.p2.x + 40.0;
+					self.p1.y = self.p2.y;
+					self.rotation = 2;
+				},
+				2 => {
+					self.p2 = self.p4.clone();
+					self.p4.x = self.p3.x;
+					self.p4.y = self.p3.y - 40.0;
+					self.p1.x = self.p2.x;
+					self.p1.y = self.p2.y + 40.0;
+					self.rotation = 1;
+				},
+				1 => {
+					self.p2 = self.p4.clone();
+					self.p4.x = self.p3.x + 40.0;
+					self.p4.y = self.p3.y;
+					self.p1.x = self.p2.x - 40.0;
+					self.p1.y = self.p2.y;
+					self.rotation = 0;
+				}
+				_ => println!("error")
+			}
+		}
+		if self.piece_type == S {
+			match self.rotation {
+				0 => { 
+					self.p4 = self.p2.clone();
+					self.p2.x = self.p3.x - 40.0;
+					self.p2.y = self.p3.y;
+					self.p1.x = self.p2.x;
+					self.p1.y = self.p2.y - 40.0;
+					self.rotation = 3;
+				},
+				3 => {
+					self.p4 = self.p2.clone();
+					self.p2.x = self.p3.x;
+					self.p2.y = self.p3.y - 40.0;
+					self.p1.x = self.p2.x + 40.0;
+					self.p1.y = self.p2.y;
+					self.rotation = 2;
+				},
+				2 => {
+					self.p4 = self.p2.clone();
+					self.p2.x = self.p3.x + 40.0;
+					self.p2.y = self.p3.y;
+					self.p1.x = self.p2.x;
+					self.p1.y = self.p2.y + 40.0;
+					self.rotation = 1;
+				},
+				1 => {
+					self.p4 = self.p2.clone();
+					self.p2.x = self.p3.x;
+					self.p2.y = self.p3.y + 40.0;
+					self.p1.x = self.p2.x - 40.0;
+					self.p1.y = self.p2.y;
+					self.rotation = 0;
+				},
+				_ => println!("error")
+			}
+		}
+		if self.piece_type == L {
+			match self.rotation {
+				0 => { 
+					self.p4.x = self.p3.x;
+					self.p4.y = self.p3.y;
+					self.p3.x = self.p2.x;
+					self.p3.y = self.p2.y;
+					self.p2.x = self.p3.x + 40.0;
+					self.p2.y = self.p3.y;
+					self.p1.x = self.p2.x + 40.0;
+					self.p1.y = self.p2.y;
+					self.rotation = 3;
+				},
+				3 => {
+					self.p4.x = self.p3.x;
+					self.p4.y = self.p3.y;
+					self.p3.x = self.p2.x;
+					self.p3.y = self.p2.y;
+					self.p2.x = self.p3.x;
+					self.p2.y = self.p3.y + 40.0;
+					self.p1.x = self.p2.x;
+					self.p1.y = self.p2.y + 40.0;
+					self.rotation = 2;
+				},
+				2 => {
+					self.p4.x = self.p3.x;
+					self.p4.y = self.p3.y;
+					self.p3.x = self.p2.x;
+					self.p3.y = self.p2.y;
+					self.p2.x = self.p3.x - 40.0;
+					self.p2.y = self.p3.y;
+					self.p1.x = self.p2.x - 40.0;
+					self.p1.y = self.p2.y;
+					self.rotation = 1;
+				},
+				1 => {
+					self.p4.x = self.p3.x;
+					self.p4.y = self.p3.y;
+					self.p3.x = self.p2.x;
+					self.p3.y = self.p2.y;
+					self.p2.x = self.p3.x;
+					self.p2.y = self.p3.y - 40.0;
+					self.p1.x = self.p2.x;
+					self.p1.y = self.p2.y - 40.0;
+					self.rotation = 0;
+				},
+				_ => println!("error")
+			}
+		}
+		if self.piece_type == J {
+			match self.rotation {
+				0 => { 
+					self.p4.x = self.p2.x;
+					self.p4.y = self.p2.y;
+					self.p2.y = self.p3.y;
+					self.p2.x = self.p3.x + 40.0;
+					self.p1.y = self.p2.y;
+					self.p1.x = self.p2.x + 40.0;
+					self.rotation = 3;
+				},
+				3 => {
+					self.p4.x = self.p2.x;
+					self.p4.y = self.p2.y;
+					self.p2.y = self.p3.y + 40.0;
+					self.p2.x = self.p3.x;
+					self.p1.y = self.p2.y + 40.0;
+					self.p1.x = self.p2.x;
+					self.rotation = 2;
+				},
+				2 => {
+					self.p4.x = self.p2.x;
+					self.p4.y = self.p2.y;
+					self.p2.y = self.p3.y;
+					self.p2.x = self.p3.x - 40.0;
+					self.p1.y = self.p2.y;
+					self.p1.x = self.p2.x - 40.0;
+					self.rotation = 1;
+				},
+				1 => {
+					self.p4.x = self.p2.x;
+					self.p4.y = self.p2.y;
+					self.p2.y = self.p3.y - 40.0;
+					self.p2.x = self.p3.x;
+					self.p1.y = self.p2.y - 40.0;
+					self.p1.x = self.p2.x;
+					self.rotation = 0;
+				},
+				_ => println!("error")
+			}
+		}
 	}
 
 	pub fn rotate_left(&mut self) {
@@ -190,21 +354,35 @@ impl Piece {
 		if self.piece_type == Z {
 			match self.rotation {
 				0 => { 
-					self.p4.x = self.p3.x - 40.0;
-					self.p4.y = self.p3.y;
-					self.p3.x = self.p1.x;
-					self.p3.y = self.p1.y;
+					self.p4 = self.p2.clone();
+					self.p2.x = self.p3.x - 40.0;
+					self.p2.y = self.p3.y;
 					self.p1.x = self.p2.x;
-					self.p1.y = self.p2.y - 40.0;
+					self.p1.y = self.p2.y + 40.0;
 					self.rotation = 1;
 				},
 				1 => {
-					self.p1.x = self.p3.x;
-					self.p1.y = self.p3.y;
-					self.p3.x = self.p2.x;
-					self.p3.y = self.p2.y + 40.0;
-					self.p4.x = self.p3.x + 40.0;
-					self.p4.y = self.p3.y;
+					self.p4 = self.p2.clone();
+					self.p2.x = self.p3.x;
+					self.p2.y = self.p3.y + 40.0;
+					self.p1.x = self.p2.x + 40.0;
+					self.p1.y = self.p2.y;
+					self.rotation = 2;
+				},
+				2 => {
+					self.p4 = self.p2.clone();
+					self.p2.x = self.p3.x + 40.0;
+					self.p2.y = self.p3.y;
+					self.p1.x = self.p2.x;
+					self.p1.y = self.p2.y - 40.0;
+					self.rotation = 3;
+				},
+				3 => {
+					self.p4 = self.p2.clone();
+					self.p2.x = self.p3.x;
+					self.p2.y = self.p3.y - 40.0;
+					self.p1.x = self.p2.x - 40.0;
+					self.p1.y = self.p2.y;
 					self.rotation = 0;
 				},
 				_ => println!("error")
@@ -213,19 +391,33 @@ impl Piece {
 		if self.piece_type == S {
 			match self.rotation {
 				0 => { 
-					self.p4.x = self.p2.x;
-					self.p4.y = self.p2.y;
-					self.p2.x = self.p3.x - 40.0;
-					self.p2.y = self.p3.y;
+					self.p2 = self.p4.clone();
+					self.p4.x = self.p3.x;
+					self.p4.y = self.p3.y - 40.0;
 					self.p1.x = self.p2.x;
-					self.p1.y = self.p2.y - 40.0;
+					self.p1.y = self.p2.y + 40.0;
 					self.rotation = 1;
 				},
 				1 => {
+					self.p2 = self.p4.clone();
+					self.p4.x = self.p3.x - 40.0;
+					self.p4.y = self.p3.y;
+					self.p1.x = self.p2.x + 40.0;
+					self.p1.y = self.p2.y;
+					self.rotation = 2;
+				},
+				2 => {
+					self.p2 = self.p4.clone();
+					self.p4.x = self.p3.x;
+					self.p4.y = self.p3.y + 40.0;
+					self.p1.x = self.p2.x;
+					self.p1.y = self.p2.y - 40.0;
+					self.rotation = 3;
+				},
+				3 => {
+					self.p2 = self.p4.clone();
 					self.p4.x = self.p3.x + 40.0;
 					self.p4.y = self.p3.y;
-					self.p2.x = self.p3.x;
-					self.p2.y = self.p3.y + 40.0;
 					self.p1.x = self.p2.x - 40.0;
 					self.p1.y = self.p2.y;
 					self.rotation = 0;
@@ -236,21 +428,15 @@ impl Piece {
 		if self.piece_type == L {
 			match self.rotation {
 				0 => { 
-					self.p4.x = self.p3.x;
-					self.p4.y = self.p3.y;
-					self.p3.x = self.p2.x;
-					self.p3.y = self.p2.y;
-					self.p2.x = self.p3.x + 40.0;
+					self.p4 = self.p2.clone();
+					self.p2.x = self.p3.x - 40.0;
 					self.p2.y = self.p3.y;
-					self.p1.x = self.p2.x + 40.0;
+					self.p1.x = self.p2.x - 40.0;
 					self.p1.y = self.p2.y;
 					self.rotation = 1;
 				},
 				1 => {
-					self.p4.x = self.p3.x;
-					self.p4.y = self.p3.y;
-					self.p3.x = self.p2.x;
-					self.p3.y = self.p2.y;
+					self.p4 = self.p2.clone();
 					self.p2.x = self.p3.x;
 					self.p2.y = self.p3.y + 40.0;
 					self.p1.x = self.p2.x;
@@ -258,21 +444,15 @@ impl Piece {
 					self.rotation = 2;
 				},
 				2 => {
-					self.p4.x = self.p3.x;
-					self.p4.y = self.p3.y;
-					self.p3.x = self.p2.x;
-					self.p3.y = self.p2.y;
-					self.p2.x = self.p3.x - 40.0;
+					self.p4 = self.p2.clone();
+					self.p2.x = self.p3.x + 40.0;
 					self.p2.y = self.p3.y;
-					self.p1.x = self.p2.x - 40.0;
+					self.p1.x = self.p2.x + 40.0;
 					self.p1.y = self.p2.y;
 					self.rotation = 3;
 				},
 				3 => {
-					self.p4.x = self.p3.x;
-					self.p4.y = self.p3.y;
-					self.p3.x = self.p2.x;
-					self.p3.y = self.p2.y;
+					self.p4 = self.p2.clone();
 					self.p2.x = self.p3.x;
 					self.p2.y = self.p3.y - 40.0;
 					self.p1.x = self.p2.x;
@@ -285,17 +465,17 @@ impl Piece {
 		if self.piece_type == J {
 			match self.rotation {
 				0 => { 
-					self.p4.x = self.p2.x;
-					self.p4.y = self.p2.y;
+					self.p4 = self.p3.clone();
+					self.p3 = self.p2.clone();
 					self.p2.y = self.p3.y;
-					self.p2.x = self.p3.x + 40.0;
+					self.p2.x = self.p3.x - 40.0;
 					self.p1.y = self.p2.y;
-					self.p1.x = self.p2.x + 40.0;
+					self.p1.x = self.p2.x - 40.0;
 					self.rotation = 1;
 				},
 				1 => {
-					self.p4.x = self.p2.x;
-					self.p4.y = self.p2.y;
+					self.p4 = self.p3.clone();
+					self.p3 = self.p2.clone();
 					self.p2.y = self.p3.y + 40.0;
 					self.p2.x = self.p3.x;
 					self.p1.y = self.p2.y + 40.0;
@@ -303,17 +483,17 @@ impl Piece {
 					self.rotation = 2;
 				},
 				2 => {
-					self.p4.x = self.p2.x;
-					self.p4.y = self.p2.y;
+					self.p4 = self.p3.clone();
+					self.p3 = self.p2.clone();
 					self.p2.y = self.p3.y;
-					self.p2.x = self.p3.x - 40.0;
+					self.p2.x = self.p3.x + 40.0;
 					self.p1.y = self.p2.y;
-					self.p1.x = self.p2.x - 40.0;
+					self.p1.x = self.p2.x + 40.0;
 					self.rotation = 3;
 				},
 				3 => {
-					self.p4.x = self.p2.x;
-					self.p4.y = self.p2.y;
+					self.p4 = self.p3.clone();
+					self.p3 = self.p2.clone();
 					self.p2.y = self.p3.y - 40.0;
 					self.p2.x = self.p3.x;
 					self.p1.y = self.p2.y - 40.0;

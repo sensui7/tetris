@@ -222,11 +222,30 @@ impl Board {
 				return true;
 			},
 			L => {
+				println!("{}, {}", p1.0, p1.1);
+				println!("{}, {}", p2.0, p2.1);
+				println!("{}, {}", p3.0, p3.1);
+				println!("{}, {}", p4.0, p4.1);
+				while (test_right.p1.x / 40.0) > 9.0 {
+					test_right.move_left();
+				}
+
+				p.p1 = test_right.p2.clone();
+				p.p2 = test_right.p3.clone();
+				p.p3 = test_right.p4.clone();
+				p.p4 = test_right.p1.clone();
+			
+				/*
 				if p.rotation == 0 && p4.0 == 9.0 {
 					p.move_left();
 				} else if p.rotation == 2 && p4.0 <= 1.0 {
 					p.move_right();
+				} else if p.rotation == 2 && p4.0 == 8.0 {
+					p.move_left();
+				} else if p.rotation == 2 && p4.0 == 7.0 {
+					p.move_left();
 				}
+				*/
 			},
 			J => {
 				if p.rotation == 0 && p1.0 == 8.0 {

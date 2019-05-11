@@ -14,9 +14,21 @@ pub struct App {
 }
 
 impl App {
+
+	pub fn render_squares(&mut self, color: &[f32; 4], sq: &[f64; 4], c: &graphics::Context, gl: &mut GlGraphics) {
+		use graphics::*;
+		rectangle(*color, *sq, c.transform, gl);
+		/*
+		rectangle(color, square2, c.transform, gl);
+		rectangle(color, square3, c.transform, gl);
+		rectangle(color, square4, c.transform, gl);
+		*/
+	}
+
     pub fn render(&mut self, args: &RenderArgs) {
         use graphics::*;
 
+		const GREY: [f32; 4] = [0.5, 0.5, 0.5, 0.8];
 		const GREEN: [f32; 4] = [0.0, 1.0, 0.0, 1.0];
         const RED:   [f32; 4] = [1.0, 0.0, 0.0, 1.0];
 		const DARK_BLUE: [f32; 4] = [0.0, 0.0, 0.54, 1.0];
@@ -32,6 +44,16 @@ impl App {
         let square2 = rectangle::square(self.piece.p2.x, self.piece.p2.y, 40.0);
         let square3 = rectangle::square(self.piece.p3.x, self.piece.p3.y, 40.0);
         let square4 = rectangle::square(self.piece.p4.x, self.piece.p4.y, 40.0);
+
+		let mut shadow: Piece = self.piece.clone();
+
+		while self.board.collision(&shadow) != true {
+			shadow.move_down();
+		}
+        let s1 = rectangle::square(shadow.p1.x, shadow.p1.y, 40.0);
+        let s2 = rectangle::square(shadow.p2.x, shadow.p2.y, 40.0);
+        let s3 = rectangle::square(shadow.p3.x, shadow.p3.y, 40.0);
+        let s4 = rectangle::square(shadow.p4.x, shadow.p4.y, 40.0);
 
         //let rotation = self.rotation;
 		/*
@@ -49,13 +71,14 @@ impl App {
         self.gl.draw(args.viewport(), |c: Context, gl: &mut GlGraphics| {
             // Clear the screen.
             clear(BLACK, gl);
-			/*
-            let transform = c.transform.trans(x, y)
-                                       .rot_rad(rotation)
-                                       .trans(-25.0, -25.0);
-			*/
-			//let transform = c.transform.trans(0.0, 0.0);
-            // Draw a box rotating around the middle of the screen.
+			//self.render_squares(&GREEN, &square2, &c, &mut self.gl);
+
+			// render shadow
+			rectangle(GREY, s1, c.transform, gl);
+			rectangle(GREY, s2, c.transform, gl);
+			rectangle(GREY, s3, c.transform, gl);
+			rectangle(GREY, s4, c.transform, gl);
+
 			match curr_piece {
 			// Need to make the 4 rectangle calls into a function
 				T => {
