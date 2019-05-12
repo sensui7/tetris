@@ -1,5 +1,11 @@
 use crate::pieces::*;
 use crate::randomizer::PieceTypes::*;
+use crate::pieces::Dir::*;
+use crate::pieces::UNIT;
+
+const LEFT_BOUNDARY: f64 = 0.0;
+const RIGHT_BOUNDARY: f64 = 9.0;
+const BOTTOM_BOUNDARY: f64 = 19.0;
 
 pub struct Board {
 	pub rows: u64,
@@ -21,10 +27,10 @@ impl Board {
 			S => { piece_digit = 7 }
 		};
 
-		self.data[(p.p1.y / 40.0).round() as usize][(p.p1.x / 40.0).round() as usize] = piece_digit;
-		self.data[(p.p2.y / 40.0).round() as usize][(p.p2.x / 40.0).round() as usize] = piece_digit;
-		self.data[(p.p3.y / 40.0).round() as usize][(p.p3.x / 40.0).round() as usize] = piece_digit;
-		self.data[(p.p4.y / 40.0).round() as usize][(p.p4.x / 40.0).round() as usize] = piece_digit;
+		self.data[(p.p1.y / UNIT).round() as usize][(p.p1.x / UNIT).round() as usize] = piece_digit;
+		self.data[(p.p2.y / UNIT).round() as usize][(p.p2.x / UNIT).round() as usize] = piece_digit;
+		self.data[(p.p3.y / UNIT).round() as usize][(p.p3.x / UNIT).round() as usize] = piece_digit;
+		self.data[(p.p4.y / UNIT).round() as usize][(p.p4.x / UNIT).round() as usize] = piece_digit;
 	}
 
 	pub fn clear(&mut self) {
@@ -56,17 +62,10 @@ impl Board {
 	}
 
 	pub fn convert_xy(&self, x: f64, y: f64) -> (usize, usize) {
-		if y < 0.0 {
-			return ((x / 40.0).round() as usize, 0 as usize);
+		if y < LEFT_BOUNDARY {
+			return ((x / UNIT).round() as usize, 0 as usize);
 		}
-		return ((x / 40.0).round() as usize, (y / 40.0).round() as usize);
-	}
-
-	fn convert_xy_f64(&self, x: f64, y: f64) -> (f64, f64) {
-		if y < 0.0 {
-			return (x / 40.0, 0.0);
-		}
-		return (x / 40.0, y / 40.0);
+		return ((x / UNIT).round() as usize, (y / UNIT).round() as usize);
 	}
 
 	pub fn collision(&mut self, p: &Piece) -> bool {
@@ -74,12 +73,6 @@ impl Board {
 		let p2 = self.convert_xy(p.p2.x, p.p2.y);
 		let p3 = self.convert_xy(p.p3.x, p.p3.y);
 		let p4 = self.convert_xy(p.p4.x, p.p4.y);
-
-		/*
-		if  p1.1 == 0 || p2.1 == 0 || p3.1 == 0 || p4.1 == 0 {
-			return false;
-		}
-		*/
 
 		if p1.1 >= 19 || p2.1 >= 19 || p3.1 >= 19 || p4.1 >= 19 {
 			return true;
@@ -104,25 +97,22 @@ impl Board {
 		false
 	}
 
-	// Let dir = 0 for left
-	// Let dir = 1 for right
-	pub fn check_side_collision(&self, row: usize, col: usize, dir: u64) -> bool {
-		if dir == 0 && row == 0 {
+	pub fn check_side_collision(&self, row: usize, col: usize, dir: Dir) -> bool {
+		if dir == LEFT && row == 0 {
 			return true;
 		}
 
-		if dir == 0 && row >= 1 {
+		if dir == LEFT && row >= 1 {
 			if self.data[col][row - 1] != 0 {
 				return true;
 			}
 		}
 
-		if dir == 1 && row as u64 == self.rows - 1 {
-			println!("{}, {}", row, col);
+		if dir == RIGHT && row as u64 == self.rows - 1 {
 			return true;
 		}
 
-		if dir == 1 && (row as u64) < self.rows - 1 {
+		if dir == RIGHT && (row as u64) < self.rows - 1 {
 			if self.data[col][row + 1] != 0 {
 				return true;
 			}
@@ -131,7 +121,8 @@ impl Board {
 		false
 	}
 
-	pub fn check_overlap(&self, p: &Piece, dir: u64) -> bool {
+	// Check if a piece overlaps with another piece via side collision
+	pub fn check_overlap(&self, p: &Piece, dir: Dir) -> bool {
 		let p1 = self.convert_xy(p.p1.x, p.p1.y);
 		let p2 = self.convert_xy(p.p2.x, p.p2.y);
 		let p3 = self.convert_xy(p.p3.x, p.p3.y);
@@ -143,6 +134,7 @@ impl Board {
 			   self.check_side_collision(p4.0, p4.1, dir);
 	}
 
+	// Check if a piece overlaps with another piece before rotating
 	pub fn check_rotate_overlap(&self, p: &Piece) -> bool {
 		let p1 = self.convert_xy(p.p1.x, p.p1.y);
 		let p2 = self.convert_xy(p.p2.x, p.p2.y);
@@ -159,7 +151,7 @@ impl Board {
 
 		// https://doc.rust-lang.org/std/iter/struct.Enumerate.html
 		for (i, col) in self.data.iter().enumerate() {
-			for (j, row) in col.iter().enumerate() {
+			for (j, _row) in col.iter().enumerate() {
 				if self.data[i][j] != 0 {
 					if p1.1 == i && p1.0 == j {
 						return true;
@@ -179,100 +171,61 @@ impl Board {
 
 		false
 	}
+
+	// Check if a piece can rotate left/right
+	pub fn check_can_rotate(&self, p: &mut Piece, dir: Dir) -> bool {
+		let mut test = p.clone();
 	
-	pub fn check_can_rotate(&self, p: &mut Piece) -> bool {
-		let p1 = self.convert_xy_f64(p.p1.x, p.p1.y);
-		let p2 = self.convert_xy_f64(p.p2.x, p.p2.y);
-		let p3 = self.convert_xy_f64(p.p3.x, p.p3.y);
-		let p4 = self.convert_xy_f64(p.p4.x, p.p4.y);
+		if dir == LEFT  { test.rotate_left(); }
+		if dir == RIGHT { test.rotate_right(); }
 
-		let mut test_left = p.clone();
-		let mut test_right = p.clone();
-		
-		test_left.rotate_left();
-		test_right.rotate_right();
-
-		if self.check_rotate_overlap(&test_left) == true {
-			return false;
-		}
-		
-		if self.check_rotate_overlap(&test_right) == true {
+		if self.check_rotate_overlap(&test) == true {
 			return false;
 		}
 
-		match p.piece_type {
-			T => {
-				if p.rotation == 3 && p3.0 == 9.0 {
-					p.move_left();
-				} else if p.rotation == 1 && p3.0 == 0.0 {
-					p.move_right();
-				}
-			},
-			I => {
-				if p.rotation == 1 && p3.0 == 8.0 {
-					p.move_left();
-				} else if p.rotation == 1 && p3.0 == 9.0 {
-					p.move_left();
-					p.move_left();
-				} else if p.rotation == 1 && p3.0 == 0.0 {
-					p.move_right();
-				}
-			},
-			O => {
-				return true;
-			},
-			L => {
-				println!("{}, {}", p1.0, p1.1);
-				println!("{}, {}", p2.0, p2.1);
-				println!("{}, {}", p3.0, p3.1);
-				println!("{}, {}", p4.0, p4.1);
-				while (test_right.p1.x / 40.0) > 9.0 {
-					test_right.move_left();
-				}
+		let mut c = 0;
 
-				p.p1 = test_right.p2.clone();
-				p.p2 = test_right.p3.clone();
-				p.p3 = test_right.p4.clone();
-				p.p4 = test_right.p1.clone();
-			
-				/*
-				if p.rotation == 0 && p4.0 == 9.0 {
-					p.move_left();
-				} else if p.rotation == 2 && p4.0 <= 1.0 {
-					p.move_right();
-				} else if p.rotation == 2 && p4.0 == 8.0 {
-					p.move_left();
-				} else if p.rotation == 2 && p4.0 == 7.0 {
-					p.move_left();
-				}
-				*/
-			},
-			J => {
-				if p.rotation == 0 && p1.0 == 8.0 {
-					p.move_left();
-				} else if p.rotation == 0 && p1.0 == 9.0 {
-					p.move_left();
-					p.move_left();
-				} else if p.rotation == 2 && p1.0 == 1.0 {
-					p.move_right();
-				} else if p.rotation == 2 && p1.0 == 0.0 {
-					p.move_right();
-					p.move_right();
-				}
-			},
-			Z => {
-				if p.rotation == 1 && p2.0 == 9.0 {
-					p.move_left();
-				}
-			},
-			S => {
-				if p.rotation == 1 && p3.0 == 9.0 {
-					p.move_left();
-				}
+		while (test.p1.x / UNIT) > RIGHT_BOUNDARY || (test.p2.x / UNIT) > RIGHT_BOUNDARY || (test.p3.x / UNIT) > RIGHT_BOUNDARY || (test.p4.x / UNIT) > RIGHT_BOUNDARY {
+			if self.check_overlap(p, LEFT) != true {
+				test.move_left();
+				c += 1;
+			}
+			else {
+				return false;
 			}
 		}
 
-		true
-	}
+		for _x in 0..c {
+			if self.check_overlap(p, LEFT) != true {
+				p.move_left();	
+			}
+		}
 
+		c = 0;
+
+		while (test.p1.x / UNIT) < LEFT_BOUNDARY || (test.p2.x / UNIT) < LEFT_BOUNDARY || (test.p3.x / UNIT) < LEFT_BOUNDARY || (test.p4.x / UNIT) < LEFT_BOUNDARY {
+			if self.check_overlap(p, RIGHT) != true {
+				test.move_right();
+				c += 1;
+			}
+			else {
+				return false;
+			}
+		}
+
+		for _x in 0..c {
+			if self.check_overlap(p, RIGHT) != true {
+				p.move_right();	
+			}
+		}
+
+
+		// Check bottom pit
+		if (test.p4.y / UNIT) > BOTTOM_BOUNDARY || (test.p3.y / UNIT) > BOTTOM_BOUNDARY || (test.p2.y / UNIT) > BOTTOM_BOUNDARY || (test.p1.y / UNIT) > BOTTOM_BOUNDARY {
+			return false;
+		}
+		
+		true
+
+	}
 }
