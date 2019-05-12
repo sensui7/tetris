@@ -4,7 +4,7 @@ use crate::randomizer::PieceTypes::*;
 
 pub const UNIT: f64 = 40.0;
 
-#[derive(Clone)]
+#[derive(PartialEq, Clone, Debug)]
 pub struct Point {
 	pub x: f64,
 	pub y: f64
@@ -27,9 +27,8 @@ pub enum Dir {
 7 - I
 */
 
-#[derive(Clone)]
+#[derive(PartialEq, Clone, Debug)]
 pub struct Piece {
-//	pub piece_type: String,
 	pub piece_type: PieceTypes,
 	pub rotation: u64,
 	pub p1: Point,
@@ -67,15 +66,13 @@ impl Piece {
 	}
 
 	pub fn move_down(&mut self) {
-		// gotta check if collision first
-		// if collision, then need some sort of a next block flag
 		self.p1.y += UNIT;
 		self.p2.y += UNIT;
 		self.p3.y += UNIT;
 		self.p4.y += UNIT;
 	}
 
-	pub fn rotate_t(&mut self) {
+	pub fn rotate_t_left(&mut self) {
 		self.p2.x = self.p4.x;
 		self.p2.y = self.p4.y;
 		self.p4.x = self.p3.x;
@@ -116,7 +113,7 @@ impl Piece {
 					self.p2.y = self.p1.y;	
 					self.rotation = 0;
 				}
-				_ => println!("error in rotating right")
+				_ => println!("Error: could not rotate right for T piece")
 			}
 		}
 		if self.piece_type == I {
@@ -157,7 +154,7 @@ impl Piece {
 					self.p1.y = self.p2.y;
 					self.rotation = 0;
 				},
-				_ => println!("error")
+				_ => println!("Error: could not rotate right for I piece")
 			}
 		}
 		if self.piece_type == Z {
@@ -194,7 +191,7 @@ impl Piece {
 					self.p1.y = self.p2.y;
 					self.rotation = 0;
 				}
-				_ => println!("error")
+				_ => println!("Error: could not rotate right for Z piece")
 			}
 		}
 		if self.piece_type == S {
@@ -231,7 +228,7 @@ impl Piece {
 					self.p1.y = self.p2.y;
 					self.rotation = 0;
 				},
-				_ => println!("error")
+				_ => println!("Error: could not rotate right for S piece")
 			}
 		}
 		if self.piece_type == L {
@@ -279,8 +276,8 @@ impl Piece {
 					self.p1.x = self.p2.x;
 					self.p1.y = self.p2.y - UNIT;
 					self.rotation = 0;
-				},
-				_ => println!("error")
+				}, 
+				_ => println!("Error: could not rotate right for L piece")
 			}
 		}
 		if self.piece_type == J {
@@ -321,7 +318,7 @@ impl Piece {
 					self.p1.x = self.p2.x;
 					self.rotation = 0;
 				},
-				_ => println!("error")
+				_ => println!("Error: could not rotate right for J piece")
 			}
 		}
 	}
@@ -330,30 +327,30 @@ impl Piece {
 		if self.piece_type == T {
 			match self.rotation {
 				0 => { 
-					self.rotate_t();
+					self.rotate_t_left();
 					self.p3.x = self.p1.x;
 					self.p3.y = self.p1.y + UNIT;
 					self.rotation = 1;
 				},
 				1 => {
-					self.rotate_t();
+					self.rotate_t_left();
 					self.p3.x = self.p1.x + UNIT;
 					self.p3.y = self.p1.y;
 					self.rotation = 2;
 				},
 				2 => {
-					self.rotate_t();
+					self.rotate_t_left();
 					self.p3.x = self.p1.x;		
 					self.p3.y = self.p1.y - UNIT;		
 					self.rotation = 3;
 				},
 				3 => {
-					self.rotate_t();
+					self.rotate_t_left();
 					self.p3.x = self.p1.x - UNIT;
 					self.p3.y = self.p1.y;
 					self.rotation = 0;
 				},
-				_ => println!("error")
+				_ => println!("Error: couldn't left rotate T")
 			}
 		}
 		if self.piece_type == I {
@@ -394,7 +391,7 @@ impl Piece {
 					self.p1.y = self.p2.y;
 					self.rotation = 0;
 				},
-				_ => println!("error")
+				_ => println!("Error: couldn't left rotate I")
 			}
 		}
 		if self.piece_type == Z {
@@ -431,7 +428,7 @@ impl Piece {
 					self.p1.y = self.p2.y;
 					self.rotation = 0;
 				},
-				_ => println!("error")
+				_ => println!("Error: couldn't left rotate Z")
 			}
 		}
 		if self.piece_type == S {
@@ -468,7 +465,7 @@ impl Piece {
 					self.p1.y = self.p2.y;
 					self.rotation = 0;
 				},
-				_ => println!("error")
+				_ => println!("Error: couldn't left rotate S")
 			}
 		}
 		if self.piece_type == L {
@@ -505,7 +502,7 @@ impl Piece {
 					self.p1.y = self.p2.y - UNIT;
 					self.rotation = 0;
 				},
-				_ => println!("error")
+				_ => println!("Error: couldn't left rotate L")
 			}
 		}
 		if self.piece_type == J {
@@ -546,8 +543,116 @@ impl Piece {
 					self.p1.x = self.p2.x;
 					self.rotation = 0;
 				},
-				_ => println!("error")
+				_ => println!("Error: couldn't left rotate J")
 			}
 		}
+	}
+}
+
+#[cfg(test)]
+mod tests {
+
+	use crate::pieces::Piece;
+	use crate::pieces::Point;
+	use crate::randomizer::PieceTypes::T;
+
+	#[test]
+	fn move_up_test() {
+		let mut test: Piece = Piece {
+			piece_type: T,
+			rotation: 0,
+			p1: Point { x: 200.0, y: 0.0   },
+ 		    p2: Point { x: 240.0, y: 0.0   },
+ 	        p3: Point { x: 160.0, y: 0.0   },
+		    p4: Point { x: 200.0, y: -40.0 }
+		};
+
+		let expected: Piece = Piece {
+			piece_type: T,
+			rotation: 0,
+			p1: Point { x: 200.0, y: -40.0 },
+ 		    p2: Point { x: 240.0, y: -40.0 },
+ 	        p3: Point { x: 160.0, y: -40.0 },
+		    p4: Point { x: 200.0, y: -80.0 }
+		};
+
+		test.move_up();
+
+		assert_eq!(test, expected);
+	}
+
+	#[test]
+	fn move_left_test() {
+		let mut test: Piece = Piece {
+			piece_type: T,
+			rotation: 0,
+			p1: Point { x: 200.0, y: 0.0   },
+ 		    p2: Point { x: 240.0, y: 0.0   },
+ 	        p3: Point { x: 160.0, y: 0.0   },
+		    p4: Point { x: 200.0, y: -40.0 }
+		};
+
+		let expected: Piece = Piece {
+			piece_type: T,
+			rotation: 0,
+			p1: Point { x: 160.0, y: 0.0   },
+ 		    p2: Point { x: 200.0, y: 0.0   },
+ 	        p3: Point { x: 120.0, y: 0.0   },
+		    p4: Point { x: 160.0, y: -40.0 }
+		};
+
+		test.move_left();
+
+		assert_eq!(test, expected);
+	}
+
+	#[test]
+	fn move_right_test() {
+		let mut test: Piece = Piece {
+			piece_type: T,
+			rotation: 0,
+			p1: Point { x: 200.0, y: 0.0   },
+ 		    p2: Point { x: 240.0, y: 0.0   },
+ 	        p3: Point { x: 160.0, y: 0.0   },
+		    p4: Point { x: 200.0, y: -40.0 }
+		};
+
+		let expected: Piece = Piece {
+			piece_type: T,
+			rotation: 0,
+			p1: Point { x: 240.0, y: 0.0      },
+ 		    p2: Point { x: 280.0, y: 0.0      },
+ 	        p3: Point { x: 200.0, y: 0.0      },
+		    p4: Point { x: 240.0, y: -40.0    }
+		};
+
+		test.move_right();
+
+		assert_eq!(test, expected);
+	}
+
+	#[test]
+	fn move_down_test() {
+		let mut test: Piece = Piece {
+			piece_type: T,
+			rotation: 0,
+			p1: Point { x: 200.0, y: 0.0   },
+ 		    p2: Point { x: 240.0, y: 0.0   },
+ 	        p3: Point { x: 160.0, y: 0.0   },
+		    p4: Point { x: 200.0, y: -40.0 }
+		};
+
+		let expected: Piece = Piece {
+			piece_type: T,
+			rotation: 0,
+			p1: Point { x: 200.0, y: 40.0   },
+ 		    p2: Point { x: 240.0, y: 40.0   },
+ 	        p3: Point { x: 160.0, y: 40.0   },
+		    p4: Point { x: 200.0, y: 0.0    }
+		};
+
+		test.move_down();
+
+		assert_eq!(test, expected);
 	}
 }

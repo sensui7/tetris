@@ -19,7 +19,7 @@ use glutin_window::GlutinWindow as Window;
 use opengl_graphics::{ GlGraphics, OpenGL };
 
 const WIDTH: f64 = 400.0;
-// const HEIGHT: f64 = 800.0;
+const HEIGHT: f64 = 800.0;
 
 fn main() {
     // Change this to OpenGL::V2_1 if not working.
@@ -28,13 +28,14 @@ fn main() {
     // Create an Glutin window
     let mut window: Window = WindowSettings::new(
             "Tetris",
-            [400, 800]
+            [WIDTH, HEIGHT]
         )
         .opengl(opengl)
         .exit_on_esc(true)
         .build()
         .unwrap();
 
+	// Create a piece randomizer
 	let mut randomizer: Randomizer = Randomizer {
 		bag: vec![]
 	};
@@ -55,6 +56,7 @@ fn main() {
 		randomizer: randomizer
     };
 
+	// Capture events for standard game loop
     let mut events = Events::new(EventSettings::new());
 	events.set_max_fps(60);
 

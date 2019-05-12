@@ -7,6 +7,7 @@ const LEFT_BOUNDARY: f64 = 0.0;
 const RIGHT_BOUNDARY: f64 = 9.0;
 const BOTTOM_BOUNDARY: f64 = 19.0;
 
+#[derive(PartialEq, Clone, Debug)]
 pub struct Board {
 	pub rows: u64,
 	pub cols: u64,
@@ -226,6 +227,74 @@ impl Board {
 		}
 		
 		true
+
+	}
+}
+
+#[cfg(test)]
+mod tests {
+
+	use crate::board::Board;
+	use crate::randomizer::I_PIECE;
+
+	#[test]
+	fn set_test() {
+		let mut test: Board = Board {
+			rows: 10,
+			cols: 20,
+			data: vec![vec![0; 10]; 20]
+		};
+
+		let test_piece = I_PIECE;
+		test.set(&test_piece);
+
+		assert_eq!(test.data[0][3], 2);
+		assert_eq!(test.data[0][4], 2);
+		assert_eq!(test.data[0][5], 2);
+		assert_eq!(test.data[0][6], 2);
+	}
+
+	#[test]
+	fn clear_test() {
+		let mut test: Board = Board {
+			rows: 10,
+			cols: 20,
+			data: vec![vec![0; 10]; 20]
+		};
+
+		for i in test.data[19].iter_mut() {
+			*i = 1;	
+		}
+
+		test.clear();
+
+		for i in 0..9 {
+			assert_eq!(test.data[19][i], 0);
+		}
+	}
+
+	#[test]
+	fn collision_test() {
+
+	}
+
+	#[test]
+	fn check_side_collision() {
+
+	}
+
+	#[test]
+	fn check_overlap() {
+
+	}
+
+	#[test]
+	fn check_rotate_overlap() {
+
+	}
+
+	#[test]
+	fn check_can_rotate_overlap() {
 
 	}
 }
