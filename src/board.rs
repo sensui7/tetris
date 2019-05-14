@@ -90,7 +90,6 @@ impl Board {
 	}
 
 	pub fn check_piece_collision(&self, row: usize, col: usize) -> bool {
-		//println!("row: {}, col: {}", row, col);
 		if self.data[col + 1][row] != 0 {
 			return true;
 		}
@@ -163,19 +162,15 @@ impl Board {
 			for (j, _row) in col.iter().enumerate() {
 				if self.data[i][j] != 0 {
 					if p1.1 == i && p1.0 == j {
-						println!("case 1: {}, {}", p1.1, p1.0);
 						return true;
 					}
 					if p2.1 == i && p2.0 == j {
-						println!("case 2: {}, {}", p2.1, p2.0);
 						return true;
 					}
 					if p3.1 == i && p3.0 == j {
-						println!("case 3: {}, {}", p3.1, p3.0);
 						return true;
 					}
 					if p4.1 == i && p4.0 == j {
-						println!("case 4: {}, {}", p4.1, p4.0);
 						return true;
 					}
 				}

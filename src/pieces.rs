@@ -2,7 +2,7 @@ use crate::WIDTH;
 use crate::randomizer::*;
 use crate::randomizer::PieceTypes::*;
 
-pub const UNIT: f64 = 40.0;
+pub const UNIT: f64 = 30.0;
 
 #[derive(PartialEq, Clone, Debug)]
 pub struct Point {

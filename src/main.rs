@@ -19,8 +19,8 @@ use piston::input::*;
 use glutin_window::GlutinWindow as Window;
 use opengl_graphics::{ GlGraphics, OpenGL };
 
-const WIDTH: f64 = 400.0;
-const HEIGHT: f64 = 800.0;
+const WIDTH: f64 = 300.0;
+const HEIGHT: f64 = 600.0;
 
 #[derive(Copy, Clone, Hash, PartialEq, Eq)]
 pub enum Music {}

@@ -25,29 +25,29 @@ impl App {
         const RED:   	 [f32; 4] = [1.0, 0.0, 0.0, 1.0];
 		const DARK_BLUE: [f32; 4] = [0.0, 0.0, 0.5, 1.0];
 		const ORANGE: 	 [f32; 4] = [1.0, 0.6, 0.0, 1.0];
-		const YELLOW: 	 [f32; 4] = [1.0, 1.0, 0.0, 1.0];
+		const YELLOW: 	 [f32; 4] = [1.0, 0.8, 0.0, 1.0];
 		const TEAL: 	 [f32; 4] = [0.0, 1.0, 1.0, 1.0];
 		const PURPLE: 	 [f32; 4] = [1.0, 0.0, 1.0, 1.0];
 		const BLACK: 	 [f32; 4] = [0.0, 0.0, 0.0, 1.0];
         const WHITE: 	 [f32; 4] = [1.0, 1.0, 1.0, 1.0];
 
 		// if next block flag is true, generate a new piece here
-        let square1 = rectangle::square(self.piece.p1.x, self.piece.p1.y, 40.0);
-        let square2 = rectangle::square(self.piece.p2.x, self.piece.p2.y, 40.0);
-        let square3 = rectangle::square(self.piece.p3.x, self.piece.p3.y, 40.0);
-        let square4 = rectangle::square(self.piece.p4.x, self.piece.p4.y, 40.0);
+        let square1 = rectangle::square(self.piece.p1.x, self.piece.p1.y, UNIT);
+        let square2 = rectangle::square(self.piece.p2.x, self.piece.p2.y, UNIT);
+        let square3 = rectangle::square(self.piece.p3.x, self.piece.p3.y, UNIT);
+        let square4 = rectangle::square(self.piece.p4.x, self.piece.p4.y, UNIT);
 
 		let mut shadow: Piece = self.piece.clone();
 
 		while self.board.collision(&shadow) != true {
 			shadow.move_down();
 		}
-        let s1 = rectangle::square(shadow.p1.x, shadow.p1.y, 40.0);
-        let s2 = rectangle::square(shadow.p2.x, shadow.p2.y, 40.0);
-        let s3 = rectangle::square(shadow.p3.x, shadow.p3.y, 40.0);
-        let s4 = rectangle::square(shadow.p4.x, shadow.p4.y, 40.0);
+        let s1 = rectangle::square(shadow.p1.x, shadow.p1.y, UNIT);
+        let s2 = rectangle::square(shadow.p2.x, shadow.p2.y, UNIT);
+        let s3 = rectangle::square(shadow.p3.x, shadow.p3.y, UNIT);
+        let s4 = rectangle::square(shadow.p4.x, shadow.p4.y, UNIT);
 
-		let grid = grid::Grid { cols: 10, rows: 20, units: 40.0 };
+		let grid = grid::Grid { cols: 10, rows: 20, units: UNIT };
 		let line = line::Line::new(WHITE, 1.0);
 		let history: &Vec<Vec<u64>> = &self.board.data;
 		let curr_piece: &PieceTypes = &self.piece.piece_type;
@@ -110,7 +110,7 @@ impl App {
 			// render grid history of other blocks
 			for (i, col) in history.iter().enumerate() {
 				for (j, _row) in col.iter().enumerate() {
-					let sq = rectangle::square((j * 40) as f64, (i * 40) as f64, 40.0);
+					let sq = rectangle::square((j * UNIT as usize) as f64, (i * UNIT as usize) as f64, UNIT);
 					match history[i][j] {
 						0 => {}
 						1 => rectangle(PURPLE, sq, c.transform, gl),
