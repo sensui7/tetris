@@ -9,7 +9,7 @@ use opengl_graphics::{ GlGraphics };
 use music;
 
 pub struct App {
-    pub gl: GlGraphics, // OpenGL drawing backend.
+    pub gl: GlGraphics, // OpenGL drawing backend
 	pub board: Board,
 	pub piece: Piece,
 	pub time: f64,
@@ -120,7 +120,7 @@ impl App {
 						5 => rectangle(DARK_BLUE, sq, c.transform, gl),
 						6 => rectangle(RED, sq, c.transform, gl),
 						7 => rectangle(GREEN, sq, c.transform, gl),
-						_ => println!("error")
+						_ => println!("Error: something went wrong with rendering the block history")
 					}
 				}
 			}
@@ -136,10 +136,6 @@ impl App {
 			}
 			else {
 				self.board.set(&self.piece);
-
-				// Debugging purposes
-				// self.board.display();
-
 				self.piece = self.randomizer.get();
 				self.board.clear();
 			}
@@ -147,8 +143,6 @@ impl App {
 			self.time = 0.0;
 		}
 
-		// Debugging purposes
-		// println!("{}", self.time);
 		self.time += args.dt;
     }
 
@@ -160,12 +154,12 @@ impl App {
 						while self.board.collision(&self.piece) != true {
 							self.piece.move_down();
 							self.time = 1.0;
-							music::play_sound(&Sound::Ding, music::Repeat::Times(0), 0.10);
+							music::play_sound(&Sound::Drop, music::Repeat::Times(0), 0.10);
 						}
 					},
 					Key::Up => {
 						if self.board.check_can_rotate(&mut self.piece, LEFT) == true {
-							self.piece.rotate_left()
+							self.piece.rotate_left();
 						}
 					},
 					Key::Left => {
@@ -175,22 +169,22 @@ impl App {
 					},
 					Key::Right => {
 						if self.board.check_overlap(&self.piece, RIGHT) != true {
-							self.piece.move_right()
+							self.piece.move_right();
 						}
 					},
 					Key::Down => {
 						if self.board.collision(&self.piece) != true {
-							self.piece.move_down()
+							self.piece.move_down();
 						}
 					},
 					Key::Z => {
 						if self.board.check_can_rotate(&mut self.piece, LEFT) == true {
-							self.piece.rotate_left()
+							self.piece.rotate_left();
 						}
 					},
 					Key::X => {
 						if self.board.check_can_rotate(&mut self.piece, RIGHT) == true {
-							self.piece.rotate_right()
+							self.piece.rotate_right();
 						}
 					},
 					_ => ()

@@ -23,13 +23,12 @@ const WIDTH: f64 = 400.0;
 const HEIGHT: f64 = 800.0;
 
 #[derive(Copy, Clone, Hash, PartialEq, Eq)]
-pub enum Music {
-    Piano,
-}
+pub enum Music {}
 
 #[derive(Copy, Clone, Hash, PartialEq, Eq)]
 pub enum Sound {
-    Ding,
+    Drop,
+    Switch,
 }
 
 fn main() {
@@ -69,12 +68,13 @@ fn main() {
 
 	// Capture events for standard game loop
     let mut events = Events::new(EventSettings::new());
-	events.set_max_fps(60);
+	events.set_max_fps(40);
 
 	music::start::<Music, Sound, _>(32, || {
-        //music::bind_music_file(Music::Piano, "./assets/drop.mp3");
-        music::bind_sound_file(Sound::Ding, "./assets/drop.wav");
-        music::set_volume(music::MAX_VOLUME);
+        //music::bind_music_file(Music::Piano, "./assets/theme.mp3");
+        //music::set_volume(music::MAX_VOLUME);
+        music::bind_sound_file(Sound::Drop,   "./assets/drop.wav");
+        music::bind_sound_file(Sound::Switch, "./assets/switch.wav");
 
 		while let Some(e) = events.next(&mut window) {
 			if let Some(i) = e.press_args() {

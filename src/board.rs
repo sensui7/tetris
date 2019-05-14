@@ -98,6 +98,7 @@ impl Board {
 		false
 	}
 
+	// Check if a piece collides horizontally
 	pub fn check_side_collision(&self, row: usize, col: usize, dir: Dir) -> bool {
 		if dir == LEFT && row == 0 {
 			return true;
@@ -156,8 +157,6 @@ impl Board {
 		println!("p4 {}, {}", p4.0, p4.1);
 		println!("");
 		*/
-
-		self.display();
 
 		// https://doc.rust-lang.org/std/iter/struct.Enumerate.html
 		for (i, col) in self.data.iter().enumerate() {
@@ -412,10 +411,5 @@ mod tests {
 		let test_piece = I_PIECE.clone();
 
 		assert_eq!(test.check_rotate_overlap(&test_piece), false);
-	}
-
-	#[test]
-	fn check_can_rotate_overlap() {
-		
 	}
 }
