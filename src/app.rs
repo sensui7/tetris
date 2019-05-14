@@ -48,7 +48,7 @@ impl App {
         let s4 = rectangle::square(shadow.p4.x, shadow.p4.y, UNIT);
 
 		let grid = grid::Grid { cols: 10, rows: 20, units: UNIT };
-		let line = line::Line::new(WHITE, 1.0);
+		let line = line::Line::new(WHITE, 0.8);
 		let history: &Vec<Vec<u64>> = &self.board.data;
 		let curr_piece: &PieceTypes = &self.piece.piece_type;
 

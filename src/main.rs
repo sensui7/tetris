@@ -23,12 +23,17 @@ const WIDTH: f64 = 300.0;
 const HEIGHT: f64 = 600.0;
 
 #[derive(Copy, Clone, Hash, PartialEq, Eq)]
-pub enum Music {}
+pub enum Music {
+	Theme
+}
 
 #[derive(Copy, Clone, Hash, PartialEq, Eq)]
 pub enum Sound {
     Drop,
     Switch,
+	Tetris,
+	Triple,
+	Double
 }
 
 fn main() {
@@ -71,10 +76,14 @@ fn main() {
 	events.set_max_fps(40);
 
 	music::start::<Music, Sound, _>(32, || {
-        //music::bind_music_file(Music::Piano, "./assets/theme.mp3");
         //music::set_volume(music::MAX_VOLUME);
+        music::bind_music_file(Music::Theme,  "./assets/theme.mp3");
         music::bind_sound_file(Sound::Drop,   "./assets/drop.wav");
         music::bind_sound_file(Sound::Switch, "./assets/switch.wav");
+        music::bind_sound_file(Sound::Tetris,  "./assets/tetris.mp3");
+        music::bind_sound_file(Sound::Triple, "./assets/triple.mp3");
+        music::bind_sound_file(Sound::Double, "./assets/double.mp3");
+		music::play_music(&Music::Theme, music::Repeat::Forever);
 
 		while let Some(e) = events.next(&mut window) {
 			if let Some(i) = e.press_args() {

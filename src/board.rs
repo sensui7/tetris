@@ -2,6 +2,8 @@ use crate::pieces::*;
 use crate::randomizer::PieceTypes::*;
 use crate::pieces::Dir::*;
 use crate::pieces::UNIT;
+use crate::Sound;
+use music;
 
 const LEFT_BOUNDARY: f64 = 0.0;
 const RIGHT_BOUNDARY: f64 = 9.0;
@@ -46,10 +48,20 @@ impl Board {
 			}
 			count += 1;
 		}
+	
+		let mut removed = 0;
 
 		for j in new_data {
 			self.data.remove(j);
 			self.data.insert(0 as usize, empty.clone());
+			removed += 1;
+		}
+
+		match removed {
+			4 => music::play_sound(&Sound::Tetris, music::Repeat::Times(0), music::MAX_VOLUME),
+			3 => music::play_sound(&Sound::Triple, music::Repeat::Times(0), music::MAX_VOLUME),
+			2 => music::play_sound(&Sound::Double, music::Repeat::Times(0), music::MAX_VOLUME),
+			_ => {}
 		}
 	}
 
