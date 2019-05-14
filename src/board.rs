@@ -124,15 +124,22 @@ impl Board {
 
 	// Check if a piece overlaps with another piece via side collision
 	pub fn check_overlap(&self, p: &Piece, dir: Dir) -> bool {
-		let p1 = self.convert_xy(p.p1.x, p.p1.y);
-		let p2 = self.convert_xy(p.p2.x, p.p2.y);
-		let p3 = self.convert_xy(p.p3.x, p.p3.y);
-		let p4 = self.convert_xy(p.p4.x, p.p4.y);
+		let mut t1: Piece = p.clone();
+		let mut t2: Piece = p.clone();
+	
+		t1.move_left();
+		t2.move_right();
 
-		return self.check_side_collision(p1.0, p1.1, dir) || 
-			   self.check_side_collision(p2.0, p2.1, dir) || 
-			   self.check_side_collision(p3.0, p3.1, dir) || 
-			   self.check_side_collision(p4.0, p4.1, dir);
+		if dir == LEFT { 
+			return self.check_rotate_overlap(&t1); 
+		}
+		
+		if dir == RIGHT { 
+			return self.check_rotate_overlap(&t2);
+		
+		}
+
+		false
 	}
 
 	// Check if a piece overlaps with another piece before rotating
@@ -150,20 +157,26 @@ impl Board {
 		println!("");
 		*/
 
+		self.display();
+
 		// https://doc.rust-lang.org/std/iter/struct.Enumerate.html
 		for (i, col) in self.data.iter().enumerate() {
 			for (j, _row) in col.iter().enumerate() {
 				if self.data[i][j] != 0 {
 					if p1.1 == i && p1.0 == j {
+						println!("case 1: {}, {}", p1.1, p1.0);
 						return true;
 					}
 					if p2.1 == i && p2.0 == j {
+						println!("case 2: {}, {}", p2.1, p2.0);
 						return true;
 					}
 					if p3.1 == i && p3.0 == j {
+						println!("case 3: {}, {}", p3.1, p3.0);
 						return true;
 					}
 					if p4.1 == i && p4.0 == j {
+						println!("case 4: {}, {}", p4.1, p4.0);
 						return true;
 					}
 				}
@@ -187,55 +200,56 @@ impl Board {
 		let mut c = 0;
 
 		while (test.p1.x / UNIT) > RIGHT_BOUNDARY || (test.p2.x / UNIT) > RIGHT_BOUNDARY || (test.p3.x / UNIT) > RIGHT_BOUNDARY || (test.p4.x / UNIT) > RIGHT_BOUNDARY {
-			if self.check_overlap(p, LEFT) != true {
-				test.move_left();
-				c += 1;
+			test.move_left();
+			c += 1;
+		}
+
+		for _x in 0..c {
+			if self.check_overlap(p, dir) != true {
+				p.move_left();	
 			}
 			else {
 				return false;
 			}
 		}
 
-		for _x in 0..c {
-			if self.check_overlap(p, LEFT) != true {
-				p.move_left();	
-			}
-		}
-
+		
 		c = 0;
 
 		while (test.p1.x / UNIT) < LEFT_BOUNDARY || (test.p2.x / UNIT) < LEFT_BOUNDARY || (test.p3.x / UNIT) < LEFT_BOUNDARY || (test.p4.x / UNIT) < LEFT_BOUNDARY {
-			if self.check_overlap(p, RIGHT) != true {
-				test.move_right();
-				c += 1;
+			test.move_right();
+			c += 1;
+		}
+
+		for _x in 0..c {
+			if self.check_overlap(p, dir) != true {
+				p.move_right();	
 			}
 			else {
 				return false;
 			}
 		}
 
-		for _x in 0..c {
-			if self.check_overlap(p, RIGHT) != true {
-				p.move_right();	
-			}
-		}
-
-
+		
 		// Check bottom pit
 		if (test.p4.y / UNIT) > BOTTOM_BOUNDARY || (test.p3.y / UNIT) > BOTTOM_BOUNDARY || (test.p2.y / UNIT) > BOTTOM_BOUNDARY || (test.p1.y / UNIT) > BOTTOM_BOUNDARY {
 			return false;
 		}
 		
 		true
-
 	}
 }
 
 #[cfg(test)]
 mod tests {
 
+	use crate::pieces::UNIT;
 	use crate::board::Board;
 	use crate::randomizer::I_PIECE;
+	use crate::board::BOTTOM_BOUNDARY;
+	use crate::board::RIGHT_BOUNDARY;
+	use crate::pieces::Dir::LEFT;
+	use crate::pieces::Dir::RIGHT;
 
 	#[test]
 	fn set_test() {
@@ -248,10 +262,9 @@ mod tests {
 		let test_piece = I_PIECE;
 		test.set(&test_piece);
 
-		assert_eq!(test.data[0][3], 2);
-		assert_eq!(test.data[0][4], 2);
-		assert_eq!(test.data[0][5], 2);
-		assert_eq!(test.data[0][6], 2);
+		for i in 3..6 {
+			assert_eq!(test.data[0][i], 2);
+		}
 	}
 
 	#[test]
@@ -268,33 +281,141 @@ mod tests {
 
 		test.clear();
 
-		for i in 0..9 {
+		for i in 0..RIGHT_BOUNDARY as usize {
 			assert_eq!(test.data[19][i], 0);
 		}
 	}
 
 	#[test]
-	fn collision_test() {
+	fn collision_test_one() {
+		let mut test: Board = Board {
+			rows: 10,
+			cols: 20,
+			data: vec![vec![0; 10]; 20]
+		};
 
+		assert_eq!(test.collision(&I_PIECE), false);
 	}
 
 	#[test]
-	fn check_side_collision() {
+	fn collision_test_two() {
+		let mut test: Board = Board {
+			rows: 10,
+			cols: 20,
+			data: vec![vec![0; 10]; 20]
+		};
 
+		let mut test_piece = I_PIECE.clone();
+		test_piece.p1.y = BOTTOM_BOUNDARY * UNIT;
+
+		assert_eq!(test.collision(&test_piece), true);
 	}
 
 	#[test]
-	fn check_overlap() {
+	fn collision_test_three() {
+		let mut test: Board = Board {
+			rows: 10,
+			cols: 20,
+			data: vec![vec![0; 10]; 20]
+		};
 
+		for i in test.data[10].iter_mut() {
+			*i = 1;	
+		}
+
+		let mut test_piece = I_PIECE.clone();
+		test_piece.p1.y = RIGHT_BOUNDARY * UNIT;
+
+		assert_eq!(test.collision(&test_piece), true);
 	}
 
 	#[test]
-	fn check_rotate_overlap() {
+	fn check_side_collision_test_one() {
+		let test: Board = Board {
+			rows: 10,
+			cols: 20,
+			data: vec![vec![0; 10]; 20]
+		};
 
+		assert_eq!(test.check_side_collision(5, 5, LEFT), false);
+	}
+
+	#[test]
+	fn check_side_collision_test_two() {
+		let test: Board = Board {
+			rows: 10,
+			cols: 20,
+			data: vec![vec![0; 10]; 20]
+		};
+
+		assert_eq!(test.check_side_collision(0, 5, LEFT), true);
+	}
+
+	#[test]
+	fn check_side_collision_test_three() {
+		let mut test: Board = Board {
+			rows: 10,
+			cols: 20,
+			data: vec![vec![0; 10]; 20]
+		};
+
+		test.data[0][4] = 1;
+		assert_eq!(test.check_side_collision(5, 0, LEFT), true);
+	}
+
+	#[test]
+	fn check_side_collision_test_four() {
+		let test: Board = Board {
+			rows: 10,
+			cols: 20,
+			data: vec![vec![0; 10]; 20]
+		};
+
+		assert_eq!(test.check_side_collision(9, 9, RIGHT), true);
+	}
+
+	#[test]
+	fn check_side_collision_test_five() {
+		let mut test: Board = Board {
+			rows: 10,
+			cols: 20,
+			data: vec![vec![0; 10]; 20]
+		};
+
+		test.data[5][6] = 1;
+
+		assert_eq!(test.check_side_collision(5, 5, RIGHT), true);
+	}
+
+	#[test]
+	fn check_rotate_overlap_test_one() {
+		let mut test: Board = Board {
+			rows: 10,
+			cols: 20,
+			data: vec![vec![0; 10]; 20]
+		};
+
+		let test_piece = I_PIECE.clone();
+		test.data[0][4] = 2;
+
+		assert_eq!(test.check_rotate_overlap(&test_piece), true);
+	}
+
+	#[test]
+	fn check_rotate_overlap_test_two() {
+		let test: Board = Board {
+			rows: 10,
+			cols: 20,
+			data: vec![vec![0; 10]; 20]
+		};
+
+		let test_piece = I_PIECE.clone();
+
+		assert_eq!(test.check_rotate_overlap(&test_piece), false);
 	}
 
 	#[test]
 	fn check_can_rotate_overlap() {
-
+		
 	}
 }

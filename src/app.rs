@@ -3,8 +3,10 @@ use crate::board::*;
 use crate::randomizer::*;
 use crate::randomizer::PieceTypes::*;
 use crate::pieces::Dir::*;
+use crate::Sound;
 use piston::input::*;
 use opengl_graphics::{ GlGraphics };
+use music;
 
 pub struct App {
     pub gl: GlGraphics, // OpenGL drawing backend.
@@ -158,16 +160,17 @@ impl App {
 						while self.board.collision(&self.piece) != true {
 							self.piece.move_down();
 							self.time = 1.0;
+							music::play_sound(&Sound::Ding, music::Repeat::Times(0), 0.10);
 						}
 					},
 					Key::Up => {
-						if self.board.check_can_rotate(&mut self.piece, RIGHT) == true {
+						if self.board.check_can_rotate(&mut self.piece, LEFT) == true {
 							self.piece.rotate_left()
 						}
 					},
 					Key::Left => {
 						if self.board.check_overlap(&self.piece, LEFT) != true {
-							self.piece.move_left()
+							self.piece.move_left();
 						}
 					},
 					Key::Right => {

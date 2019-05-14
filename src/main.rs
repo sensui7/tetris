@@ -3,6 +3,7 @@ pub mod pieces;
 pub mod board;
 pub mod app;
 
+extern crate music;
 extern crate rand;
 extern crate piston;
 extern crate graphics;
@@ -20,6 +21,16 @@ use opengl_graphics::{ GlGraphics, OpenGL };
 
 const WIDTH: f64 = 400.0;
 const HEIGHT: f64 = 800.0;
+
+#[derive(Copy, Clone, Hash, PartialEq, Eq)]
+pub enum Music {
+    Piano,
+}
+
+#[derive(Copy, Clone, Hash, PartialEq, Eq)]
+pub enum Sound {
+    Ding,
+}
 
 fn main() {
     // Change this to OpenGL::V2_1 if not working.
@@ -60,17 +71,23 @@ fn main() {
     let mut events = Events::new(EventSettings::new());
 	events.set_max_fps(60);
 
-    while let Some(e) = events.next(&mut window) {
-		if let Some(i) = e.press_args() {
-			app.input(&i, true);
+	music::start::<Music, Sound, _>(32, || {
+        //music::bind_music_file(Music::Piano, "./assets/drop.mp3");
+        music::bind_sound_file(Sound::Ding, "./assets/drop.wav");
+        music::set_volume(music::MAX_VOLUME);
+
+		while let Some(e) = events.next(&mut window) {
+			if let Some(i) = e.press_args() {
+				app.input(&i, true);
+			}
+
+			if let Some(r) = e.render_args() {
+				app.render(&r);
+			}
+
+			if let Some(u) = e.update_args() {
+				app.update(&u);
+			}
 		}
-
-        if let Some(r) = e.render_args() {
-            app.render(&r);
-        }
-
-        if let Some(u) = e.update_args() {
-            app.update(&u);
-        }
-    }
+    });
 }

@@ -8,6 +8,7 @@ edition = "2018"
 name = "tetris"
 
 [dependencies]
+piston-music = "0.24.0"
 rand = "0.6.5"
 piston = "0.42.0"
 piston2d-graphics = "0.30.0"
