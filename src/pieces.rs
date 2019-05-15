@@ -1,3 +1,4 @@
+use std::fmt;
 use crate::WIDTH;
 use crate::randomizer::*;
 use crate::randomizer::PieceTypes::*;
@@ -15,7 +16,6 @@ pub enum Dir {
     LEFT,
     RIGHT
 }
-
 
 /*
 1 - T
@@ -37,15 +37,13 @@ pub struct Piece {
 	pub p4: Point
 }
 
-impl Piece {
-	pub fn move_up(&mut self) {
-		if self.p1.x > 0.0 && self.p2.x > 0.0 && self.p3.x > 0.0 && self.p4.x > 0.0 {
-			self.p1.y -= UNIT;
-			self.p2.y -= UNIT;
-			self.p3.y -= UNIT;
-			self.p4.y -= UNIT;
-		}
+impl fmt::Display for Piece {
+	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+		write!(f, "Piece: {}", self.piece_type)
 	}
+}
+
+impl Piece {
 
 	pub fn move_left(&mut self) {
 		if self.p1.x > 0.0 && self.p2.x > 0.0 && self.p3.x > 0.0 && self.p4.x > 0.0 {
@@ -553,53 +551,18 @@ impl Piece {
 mod tests {
 
 	use crate::pieces::Piece;
-	use crate::pieces::Point;
-	use crate::randomizer::PieceTypes::T;
-
-	#[test]
-	fn move_up_test() {
-		let mut test: Piece = Piece {
-			piece_type: T,
-			rotation: 0,
-			p1: Point { x: 200.0, y: 0.0   },
- 		    p2: Point { x: 240.0, y: 0.0   },
- 	        p3: Point { x: 160.0, y: 0.0   },
-		    p4: Point { x: 200.0, y: -40.0 }
-		};
-
-		let expected: Piece = Piece {
-			piece_type: T,
-			rotation: 0,
-			p1: Point { x: 200.0, y: -40.0 },
- 		    p2: Point { x: 240.0, y: -40.0 },
- 	        p3: Point { x: 160.0, y: -40.0 },
-		    p4: Point { x: 200.0, y: -80.0 }
-		};
-
-		test.move_up();
-
-		assert_eq!(test, expected);
-	}
+	use crate::pieces::UNIT;
+	use crate::randomizer::T_PIECE;
 
 	#[test]
 	fn move_left_test() {
-		let mut test: Piece = Piece {
-			piece_type: T,
-			rotation: 0,
-			p1: Point { x: 200.0, y: 0.0   },
- 		    p2: Point { x: 240.0, y: 0.0   },
- 	        p3: Point { x: 160.0, y: 0.0   },
-		    p4: Point { x: 200.0, y: -40.0 }
-		};
+		let mut test: Piece = T_PIECE.clone();
+		let mut expected: Piece = T_PIECE.clone();
 
-		let expected: Piece = Piece {
-			piece_type: T,
-			rotation: 0,
-			p1: Point { x: 160.0, y: 0.0   },
- 		    p2: Point { x: 200.0, y: 0.0   },
- 	        p3: Point { x: 120.0, y: 0.0   },
-		    p4: Point { x: 160.0, y: -40.0 }
-		};
+		expected.p1.x -= UNIT;
+		expected.p2.x -= UNIT;
+		expected.p3.x -= UNIT;
+		expected.p4.x -= UNIT;
 
 		test.move_left();
 
@@ -608,23 +571,13 @@ mod tests {
 
 	#[test]
 	fn move_right_test() {
-		let mut test: Piece = Piece {
-			piece_type: T,
-			rotation: 0,
-			p1: Point { x: 200.0, y: 0.0   },
- 		    p2: Point { x: 240.0, y: 0.0   },
- 	        p3: Point { x: 160.0, y: 0.0   },
-		    p4: Point { x: 200.0, y: -40.0 }
-		};
+		let mut test: Piece = T_PIECE.clone();
+		let mut expected: Piece = T_PIECE.clone();
 
-		let expected: Piece = Piece {
-			piece_type: T,
-			rotation: 0,
-			p1: Point { x: 240.0, y: 0.0      },
- 		    p2: Point { x: 280.0, y: 0.0      },
- 	        p3: Point { x: 200.0, y: 0.0      },
-		    p4: Point { x: 240.0, y: -40.0    }
-		};
+		expected.p1.x += UNIT;
+		expected.p2.x += UNIT;
+		expected.p3.x += UNIT;
+		expected.p4.x += UNIT;
 
 		test.move_right();
 
@@ -633,23 +586,13 @@ mod tests {
 
 	#[test]
 	fn move_down_test() {
-		let mut test: Piece = Piece {
-			piece_type: T,
-			rotation: 0,
-			p1: Point { x: 200.0, y: 0.0   },
- 		    p2: Point { x: 240.0, y: 0.0   },
- 	        p3: Point { x: 160.0, y: 0.0   },
-		    p4: Point { x: 200.0, y: -40.0 }
-		};
+		let mut test: Piece = T_PIECE.clone();
+		let mut expected: Piece = T_PIECE.clone();
 
-		let expected: Piece = Piece {
-			piece_type: T,
-			rotation: 0,
-			p1: Point { x: 200.0, y: 40.0   },
- 		    p2: Point { x: 240.0, y: 40.0   },
- 	        p3: Point { x: 160.0, y: 40.0   },
-		    p4: Point { x: 200.0, y: 0.0    }
-		};
+		expected.p1.y += UNIT;
+		expected.p2.y += UNIT;
+		expected.p3.y += UNIT;
+		expected.p4.y += UNIT;
 
 		test.move_down();
 

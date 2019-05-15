@@ -13,7 +13,7 @@ pub struct App {
 	pub board: Board,
 	pub piece: Piece,
 	pub time: f64,
-	pub randomizer: Randomizer
+	pub randomizer: Randomizer,
 }
 
 impl App {
@@ -51,6 +51,32 @@ impl App {
 		let line = line::Line::new(WHITE, 0.8);
 		let history: &Vec<Vec<u64>> = &self.board.data;
 		let curr_piece: &PieceTypes = &self.piece.piece_type;
+
+		let mut bag = self.randomizer.bag.clone();
+		if bag.len() == 0 {
+			self.randomizer.generate();
+			bag = self.randomizer.bag.clone();
+		}
+
+		let next_piece = bag.iter_mut().rev().next().unwrap();
+		let next_grid = grid::Grid { cols: 4, rows: 4, units: UNIT };
+
+		// Place the future pieces into the box nicely
+		match next_piece.piece_type {
+			T => next_piece.move_down(),
+			I => next_piece.rotate_left(),
+			O => next_piece.move_down(),
+			S => {},
+			Z => {},
+			L => {},
+			J => {}
+		}
+		
+		// Squares used to draw next piece
+		let n1 = rectangle::square(next_piece.p1.x + (UNIT * 8.0), next_piece.p1.y + UNIT * 2.0, UNIT);
+		let n2 = rectangle::square(next_piece.p2.x + (UNIT * 8.0), next_piece.p2.y + UNIT * 2.0, UNIT);
+		let n3 = rectangle::square(next_piece.p3.x + (UNIT * 8.0), next_piece.p3.y + UNIT * 2.0, UNIT);
+		let n4 = rectangle::square(next_piece.p4.x + (UNIT * 8.0), next_piece.p4.y + UNIT * 2.0, UNIT);
 
         self.gl.draw(args.viewport(), |c: Context, gl: &mut GlGraphics| {
             // Clear the screen.
@@ -126,6 +152,53 @@ impl App {
 			}
 
 			grid.draw(&line, &c.draw_state, c.transform, gl);
+
+			match next_piece.piece_type {
+				T => {
+					rectangle(PURPLE, n1, c.transform, gl);
+					rectangle(PURPLE, n2, c.transform, gl);
+					rectangle(PURPLE, n3, c.transform, gl);
+					rectangle(PURPLE, n4, c.transform, gl);
+				},
+				I => {
+					rectangle(TEAL, n1, c.transform, gl);
+					rectangle(TEAL, n2, c.transform, gl);
+					rectangle(TEAL, n3, c.transform, gl);
+					rectangle(TEAL, n4, c.transform, gl);
+				},
+				O => {
+					rectangle(YELLOW, n1, c.transform, gl);
+					rectangle(YELLOW, n2, c.transform, gl);
+					rectangle(YELLOW, n3, c.transform, gl);
+					rectangle(YELLOW, n4, c.transform, gl);
+				},
+				L => {
+					rectangle(ORANGE, n1, c.transform, gl);
+					rectangle(ORANGE, n2, c.transform, gl);
+					rectangle(ORANGE, n3, c.transform, gl);
+					rectangle(ORANGE, n4, c.transform, gl);
+				},
+				J => {
+					rectangle(DARK_BLUE, n1, c.transform, gl);
+					rectangle(DARK_BLUE, n2, c.transform, gl);
+					rectangle(DARK_BLUE, n3, c.transform, gl);
+					rectangle(DARK_BLUE, n4, c.transform, gl);
+				}
+				Z => {
+					rectangle(RED, n1, c.transform, gl);
+					rectangle(RED, n2, c.transform, gl);
+					rectangle(RED, n3, c.transform, gl);
+					rectangle(RED, n4, c.transform, gl);
+				},
+				S => {
+					rectangle(GREEN, n1, c.transform, gl);
+					rectangle(GREEN, n2, c.transform, gl);
+					rectangle(GREEN, n3, c.transform, gl);
+					rectangle(GREEN, n4, c.transform, gl);
+				}
+			}
+
+			next_grid.draw(&line, &c.draw_state, c.transform.trans(0.0, 0.0).trans(330.0, 30.0), gl);
         });
     }
 

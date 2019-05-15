@@ -1,5 +1,5 @@
-extern crate rand;
-
+use rand;
+use std::fmt;
 use crate::pieces::*;
 use crate::randomizer::PieceTypes::*;
 use rand::seq::SliceRandom;
@@ -14,6 +14,20 @@ pub enum PieceTypes {
 	J,
 	Z,
 	S
+}
+
+impl fmt::Display for PieceTypes {
+	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+		match *self {
+			PieceTypes::T => write!(f, "T"),
+			PieceTypes::I => write!(f, "I"),
+			PieceTypes::O => write!(f, "O"),
+			PieceTypes::L => write!(f, "L"),
+			PieceTypes::J => write!(f, "J"),
+			PieceTypes::Z => write!(f, "Z"),
+			PieceTypes::S => write!(f, "S"),
+		}
+	}
 }
 
 pub struct Randomizer {
@@ -85,6 +99,8 @@ pub const J_PIECE: Piece = Piece {
 };
 
 impl Randomizer {
+	
+	// Get a random piece from a randomly generated bag
 	pub fn get(&mut self) -> Piece {
 		if self.bag.len() == 0 {
 			self.generate()	
@@ -93,11 +109,12 @@ impl Randomizer {
 		self.bag.pop().unwrap()
 	}
 
-	fn generate(&mut self) {
+	pub fn generate(&mut self) {
 		// https://rust-num.github.io/num/rand/fn.thread_rng.html
 		// Retrieve the lazily-initialized thread-local random number generator, seeded by the system.
 		let mut rng = thread_rng();
 		self.bag = vec![T_PIECE, I_PIECE, O_PIECE, L_PIECE, J_PIECE, Z_PIECE, S_PIECE];
+
 		// Shuffles mutable slice in-place
 		self.bag.shuffle(&mut rng);
 	}

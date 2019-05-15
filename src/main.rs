@@ -3,13 +3,6 @@ pub mod pieces;
 pub mod board;
 pub mod app;
 
-extern crate music;
-extern crate rand;
-extern crate piston;
-extern crate graphics;
-extern crate glutin_window;
-extern crate opengl_graphics;
-
 use crate::board::*;
 use crate::app::*;
 use crate::randomizer::*;
@@ -19,11 +12,13 @@ use piston::input::*;
 use glutin_window::GlutinWindow as Window;
 use opengl_graphics::{ GlGraphics, OpenGL };
 
+const ADDITIONAL: f64 = 180.0;
 const WIDTH: f64 = 300.0;
 const HEIGHT: f64 = 600.0;
 
 #[derive(Copy, Clone, Hash, PartialEq, Eq)]
 pub enum Music {
+	// Credits to https://musescore.com/zakuramusic/korobeiniki-tetris-Tetris
 	Theme
 }
 
@@ -43,7 +38,7 @@ fn main() {
     // Create an Glutin window
     let mut window: Window = WindowSettings::new(
             "Tetris",
-            [WIDTH, HEIGHT]
+            [WIDTH + ADDITIONAL, HEIGHT]
         )
         .opengl(opengl)
         .exit_on_esc(true)
@@ -62,6 +57,8 @@ fn main() {
 		data: vec![vec![0; 10]; 20]
 	};
 
+
+
     // Create a new game and run it
     let mut app = App {
         gl: GlGraphics::new(opengl),
@@ -77,13 +74,13 @@ fn main() {
 
 	music::start::<Music, Sound, _>(32, || {
         //music::set_volume(music::MAX_VOLUME);
-        music::bind_music_file(Music::Theme,  "./assets/theme.mp3");
+        //music::bind_music_file(Music::Theme,  "./assets/theme.mp3");
         music::bind_sound_file(Sound::Drop,   "./assets/drop.wav");
         music::bind_sound_file(Sound::Switch, "./assets/switch.wav");
         music::bind_sound_file(Sound::Tetris,  "./assets/tetris.mp3");
         music::bind_sound_file(Sound::Triple, "./assets/triple.mp3");
         music::bind_sound_file(Sound::Double, "./assets/double.mp3");
-		music::play_music(&Music::Theme, music::Repeat::Forever);
+		//music::play_music(&Music::Theme, music::Repeat::Forever);
 
 		while let Some(e) = events.next(&mut window) {
 			if let Some(i) = e.press_args() {

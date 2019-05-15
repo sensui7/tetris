@@ -1,5 +1,12 @@
 use crate::pieces::*;
 use crate::randomizer::PieceTypes::*;
+use crate::randomizer::T_PIECE;
+use crate::randomizer::I_PIECE;
+use crate::randomizer::O_PIECE;
+use crate::randomizer::S_PIECE;
+use crate::randomizer::Z_PIECE;
+use crate::randomizer::L_PIECE;
+use crate::randomizer::J_PIECE;
 use crate::pieces::Dir::*;
 use crate::pieces::UNIT;
 use crate::Sound;
@@ -86,6 +93,19 @@ impl Board {
 		let p2 = self.convert_xy(p.p2.x, p.p2.y);
 		let p3 = self.convert_xy(p.p3.x, p.p3.y);
 		let p4 = self.convert_xy(p.p4.x, p.p4.y);
+
+		// Check when too blocks are too high
+		if self.check_rotate_overlap(p) == true {
+			let test = p.clone();
+			let pieces = vec![T_PIECE, I_PIECE, O_PIECE, S_PIECE, Z_PIECE, L_PIECE, J_PIECE];
+
+			for pie in pieces {
+				if test == pie {
+					self.data = vec![vec![0; 10]; 20];
+					return true;
+				}
+			}
+		}
 
 		if p1.1 >= 19 || p2.1 >= 19 || p3.1 >= 19 || p4.1 >= 19 {
 			return true;
@@ -192,12 +212,77 @@ impl Board {
 		false
 	}
 
+	pub fn t_spin(&self, p: &mut Piece, dir: Dir) -> bool {
+		let mut test: Piece = p.clone();
+		// Need to check if out of bounds
+		if dir == LEFT {
+			test.rotate_left();
+			test.move_down();
+			test.move_left();
+
+			let mut first: Piece = p.clone();
+			first.rotate_left();
+
+			if self.check_rotate_overlap(&first) == true && self.check_rotate_overlap(&test) == false && p.piece_type == T {
+				p.rotate_left();
+				p.move_down();
+				p.move_left();
+				return true;
+			}
+
+			test = p.clone();
+			test.rotate_left();
+			test.move_down();
+			test.move_right();
+
+			if self.check_rotate_overlap(&first) == true && self.check_rotate_overlap(&test) == false && p.piece_type == T {
+				p.rotate_left();
+				p.move_down();
+				p.move_right();
+				return true;
+			}
+		} else {
+			test.rotate_right();
+			test.move_down();
+			test.move_right();
+
+			let mut first: Piece = p.clone();
+			first.rotate_right();
+
+			if self.check_rotate_overlap(&first) == true && self.check_rotate_overlap(&test) == false && p.piece_type == T {
+				p.rotate_right();
+				p.move_down();
+				p.move_right();
+				return true;
+			}
+
+			// Check for special case
+			test = p.clone();
+			test.rotate_right();
+			test.move_down();
+			test.move_left();
+
+			if self.check_rotate_overlap(&first) == true && self.check_rotate_overlap(&test) == false && p.piece_type == T {
+				p.rotate_right();
+				p.move_down();
+				p.move_left();
+				return true;
+			}
+		}
+
+		false
+	}
+
 	// Check if a piece can rotate left/right
 	pub fn check_can_rotate(&self, p: &mut Piece, dir: Dir) -> bool {
 		let mut test = p.clone();
 	
 		if dir == LEFT  { test.rotate_left(); }
 		if dir == RIGHT { test.rotate_right(); }
+
+		if self.t_spin(p, dir) == true {
+			return false;
+		}
 
 		if self.check_rotate_overlap(&test) == true {
 			return false;
@@ -256,6 +341,7 @@ mod tests {
 	use crate::board::RIGHT_BOUNDARY;
 	use crate::pieces::Dir::LEFT;
 	use crate::pieces::Dir::RIGHT;
+	use crate::pieces::Piece;
 
 	#[test]
 	fn set_test() {
@@ -265,7 +351,7 @@ mod tests {
 			data: vec![vec![0; 10]; 20]
 		};
 
-		let test_piece = I_PIECE;
+		let test_piece: Piece = I_PIECE;
 		test.set(&test_piece);
 
 		for i in 3..6 {
@@ -311,7 +397,7 @@ mod tests {
 			data: vec![vec![0; 10]; 20]
 		};
 
-		let mut test_piece = I_PIECE.clone();
+		let mut test_piece: Piece = I_PIECE.clone();
 		test_piece.p1.y = BOTTOM_BOUNDARY * UNIT;
 
 		assert_eq!(test.collision(&test_piece), true);
@@ -329,7 +415,7 @@ mod tests {
 			*i = 1;	
 		}
 
-		let mut test_piece = I_PIECE.clone();
+		let mut test_piece: Piece = I_PIECE.clone();
 		test_piece.p1.y = RIGHT_BOUNDARY * UNIT;
 
 		assert_eq!(test.collision(&test_piece), true);
@@ -401,7 +487,7 @@ mod tests {
 			data: vec![vec![0; 10]; 20]
 		};
 
-		let test_piece = I_PIECE.clone();
+		let test_piece: Piece = I_PIECE.clone();
 		test.data[0][4] = 2;
 
 		assert_eq!(test.check_rotate_overlap(&test_piece), true);
@@ -415,8 +501,83 @@ mod tests {
 			data: vec![vec![0; 10]; 20]
 		};
 
-		let test_piece = I_PIECE.clone();
+		let test_piece: Piece = I_PIECE.clone();
 
 		assert_eq!(test.check_rotate_overlap(&test_piece), false);
+	}
+
+	#[test]
+	fn check_can_rotate_test_one() {
+		let test: Board = Board {
+			rows: 10,
+			cols: 20,
+			data: vec![vec![0; 10]; 20]
+		};
+
+		let mut test_piece: Piece = I_PIECE.clone();
+	
+		// A normal rotation test
+		assert_eq!(test.check_can_rotate(&mut test_piece, LEFT), true);
+	}
+
+	#[test]
+	fn check_can_rotate_test_two() {
+		let test: Board = Board {
+			rows: 10,
+			cols: 20,
+			data: vec![vec![0; 10]; 20]
+		};
+
+		let mut test_piece: Piece = I_PIECE.clone();
+		while test_piece.p1.y / UNIT != BOTTOM_BOUNDARY {
+			test_piece.move_down();	
+		}
+	
+		// Test the rotation when piece reaches the bottom
+		assert_eq!(test.check_can_rotate(&mut test_piece, LEFT), false);
+	}
+
+	#[test]
+	fn check_can_rotate_test_three() {
+		// Need to when there's a block on the left, and cannot rotate on the right side
+		let mut test: Board = Board {
+			rows: 10,
+			cols: 20,
+			data: vec![vec![0; 10]; 20]
+		};
+
+		let mut test_piece: Piece = I_PIECE.clone();
+		test_piece.rotate_left();
+
+		while test_piece.p1.x / UNIT < RIGHT_BOUNDARY {
+			test_piece.move_right();
+		}
+
+		// Insert a random block for testing
+		test.data[0][8] = 1;
+
+		assert_eq!(test.check_can_rotate(&mut test_piece, LEFT), false);
+	}
+
+	#[test]
+	fn check_can_rotate_test_four() {
+		// Need to when there's a block on the right, and cannot rotate on the left side
+		let mut test: Board = Board {
+			rows: 10,
+			cols: 20,
+			data: vec![vec![0; 10]; 20]
+		};
+
+		let mut test_piece: Piece = I_PIECE.clone();
+		test_piece.rotate_left();
+
+		while test_piece.p1.x / UNIT > 0.0 {
+			test_piece.move_left();
+		}
+
+		// Insert a random block for testing
+		test.data[0][1] = 1;
+
+		assert_eq!(test.check_can_rotate(&mut test_piece, LEFT), false);
 	}
 }
