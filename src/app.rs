@@ -209,6 +209,9 @@ impl App {
 			}
 			else {
 				self.board.set(&self.piece);
+				if self.randomizer.bag.len() == 0 {
+					self.randomizer.generate();
+				}
 				self.piece = self.randomizer.get();
 				self.board.clear();
 			}

@@ -72,7 +72,7 @@ fn main() {
     let mut events = Events::new(EventSettings::new());
 	events.set_max_fps(40);
 
-	music::start::<Music, Sound, _>(32, || {
+	music::start::<Music, Sound, _>(100, || {
         //music::set_volume(music::MAX_VOLUME);
         //music::bind_music_file(Music::Theme,  "./assets/theme.mp3");
         music::bind_sound_file(Sound::Drop,   "./assets/drop.wav");
