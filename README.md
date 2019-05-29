@@ -2,6 +2,7 @@
 
 ## Preview
 ![Game Image](https://i.imgur.com/1MWAXAK.png)
+![Gameplay](https://media.giphy.com/media/j52OZknhdrPQCievsn/giphy.gif)
 
 ## Instructions
 Execute `cargo build && cargo run` to install the dependencies/build the program and then run it.
