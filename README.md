@@ -10,7 +10,7 @@ Execute `cargo build && cargo run` to install the dependencies/build the program
 The keybindings are `UP, DOWN, LEFT, RIGHT, SPACE, Z, and X`.
 
 ## Requirements
-You will need to install SDL2 mixer (for audio): `sudo apt-get install libsdl2-mixer-dev`
+You will need to install SDL2 mixer (for audio) and possibly SDL2: `sudo apt-get install libsdl2-dev libsdl2-mixer-dev`
 
 ## Future Features to Consider
 - All T-Spin setups
