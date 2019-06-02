@@ -2,11 +2,15 @@
 
 ## Preview
 ![Game Image](https://i.imgur.com/1MWAXAK.png)
+![Gameplay](https://media.giphy.com/media/j52OZknhdrPQCievsn/giphy.gif)
 
 ## Instructions
 Execute `cargo build && cargo run` to install the dependencies/build the program and then run it.
 
 The keybindings are `UP, DOWN, LEFT, RIGHT, SPACE, Z, and X`.
+
+## Requirements
+You will need to install SDL2 mixer (for audio) and possibly SDL2: `sudo apt-get install libsdl2-dev libsdl2-mixer-dev`
 
 ## Future Features to Consider
 - All T-Spin setups
