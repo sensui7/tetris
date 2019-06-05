@@ -27,6 +27,8 @@ You will need to install SDL2 mixer (for audio) and possibly SDL2: `sudo apt-get
     - Source referenced (and for the rest of this project): https://github.com/PistonDevelopers/Piston-Tutorials/tree/master/getting-started
   - Handles the initialization of sounds (e.g. voice person saying TETRIS)
     - Source referenced: https://github.com/PistonDevelopers/music
+    - Source for the voices: https://www.animaker.com/voice
+    - Source for the other sound effects: http://soundbible.com/tags-game.html
 - app.rs
   - Handles the functions for the game loop (input, update, render)
   - Handles all of the GlGraphics for rendering the pieces
