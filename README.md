@@ -7,6 +7,8 @@
 ## Instructions
 Execute `cargo build && cargo run` to install the dependencies/build the program and then run it.
 
+Execute `cargo test` to run the unit tests for this project.
+
 The keybindings are `UP, DOWN, LEFT, RIGHT, SPACE, Z, and X`.
 
 ## Requirements
